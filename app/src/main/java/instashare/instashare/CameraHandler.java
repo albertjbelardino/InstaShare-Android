@@ -1,6 +1,7 @@
 package instashare.instashare;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
@@ -19,6 +20,7 @@ import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
+import android.media.ExifInterface;
 import android.media.Image;
 import android.media.ImageReader;
 import android.os.Environment;
@@ -31,6 +33,7 @@ import android.util.Log;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.WindowManager;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -97,6 +100,7 @@ public class CameraHandler {
                 byte[] data = new byte[buffer.capacity()];
                 buffer.get(data);
                 Bitmap mybitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+
                 Log.d("ADASD", mybitmap.toString());
                 String filename = System.currentTimeMillis() + ".jpg";
                 File file = new File(Environment.getExternalStorageDirectory()+"/Instashare");
@@ -125,27 +129,13 @@ public class CameraHandler {
         list.add(surface);
         list.add(irsurface);
 
-        doMoreCameraStuff(list);
+        cameraSetUp(list);
     }
 
 
-    public void doMoreCameraStuff(List<Surface> ls) throws CameraAccessException {
-        while (true) {
-            if (ActivityCompat.checkSelfPermission(a, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
-                    ActivityCompat.checkSelfPermission(a, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(a, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
-                //do something
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-            } else {
-                break;
-            }
-        }
+    @SuppressLint("MissingPermission")
+    //permissions are checking the Main Activity
+    public void cameraSetUp(List<Surface> ls) throws CameraAccessException {
 
         final List<Surface> lsomething = ls;
         cm.openCamera(cm.getCameraIdList()[0], new CameraDevice.StateCallback() {
@@ -232,6 +222,8 @@ public class CameraHandler {
     public void takePictureNow() throws CameraAccessException {
         CaptureRequest.Builder cr = cd.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
         cr.addTarget(irsurface);
+
+        Log.d("TAG", Integer.toString(a.getResources().getConfiguration().orientation));
         ccsession.capture(cr.build(), new CameraCaptureSession.CaptureCallback() {
             @Override
             public void onCaptureStarted(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, long timestamp, long frameNumber) {
