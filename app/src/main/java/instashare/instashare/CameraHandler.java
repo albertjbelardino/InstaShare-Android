@@ -128,7 +128,6 @@ public class CameraHandler {
         irsurface = ir.getSurface();
         list.add(surface);
         list.add(irsurface);
-
         cameraSetUp(list);
     }
 
