@@ -1,5 +1,6 @@
 package instashare.instashare;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -24,10 +25,12 @@ public class LogInActivity extends AppCompatActivity {
                 boolean test1 = textLogUsername.getText().toString().trim().length()==0;
                 boolean test2 = textLogPassword.getText().toString().trim().length()==0;
                 if(test1||test2){
-                    Toast.makeText(LogInActivity.this, "All elements must be filled.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LogInActivity.this, "Incorrect username or password.", Toast.LENGTH_SHORT).show();
                 }
                 else{
-                    Toast.makeText(LogInActivity.this, "Hello "+textLogUsername.getText().toString(), Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(LogInActivity.this, "Hello "+textLogUsername.getText().toString(), Toast.LENGTH_SHORT).show();
+                    Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                    startActivity(i);
                 }
             }
         });
