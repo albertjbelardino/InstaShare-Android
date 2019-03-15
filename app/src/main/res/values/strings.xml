@@ -73,4 +73,13 @@
     <string name="pref_ringtone_silent">Silent</string>
 
     <string name="pref_title_vibrate">Vibrate</string>
+
+
+    <string name="username">Username</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="password2">Password Again</string>
+    <string name="button">Save</string>
+    <string name="phone">Phone Number</string>
+    <string name="log">Log In</string>
 </resources>
