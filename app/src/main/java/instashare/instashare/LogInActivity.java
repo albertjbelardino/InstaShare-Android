@@ -44,4 +44,8 @@ public class LogInActivity extends AppCompatActivity {
             }
         });
     }
+
+    public void onBackPressed(){
+        //just do nothing right now
+    }
 }
