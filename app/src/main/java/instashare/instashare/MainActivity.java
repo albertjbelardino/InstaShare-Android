@@ -13,6 +13,8 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
 
+import java.io.IOException;
+
 public class MainActivity extends AppCompatActivity {
 
     Button takepicbutton;
@@ -26,6 +28,11 @@ public class MainActivity extends AppCompatActivity {
         getPermissions();
         setUpPictureTaking();
 
+        try {
+            LoginService.login("user", "123");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void setUpPictureTaking()
