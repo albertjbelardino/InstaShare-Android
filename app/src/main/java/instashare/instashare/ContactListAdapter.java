@@ -50,17 +50,17 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         final int tempposition = position;
-        TextView username = (TextView)holder.contactView.findViewById(R.id.nameBox);
-        TextView userphone = (TextView)holder.contactView.findViewById(R.id.phoneBox);
-        ImageView userphot = (ImageView)holder.contactView.findViewById(R.id.contactImage);
-        username.setText(contactlist[position].name);
-        userphone.setText(contactlist[position].number);
-        if(contactlist[position].image != null) {
-            userphot.setImageBitmap(contactlist[position].image);
-        }
-        else
-        {
-            userphot.setImageResource(R.drawable.contact_default);
+        if(contactlist[position] != null) {
+            TextView username = (TextView) holder.contactView.findViewById(R.id.nameBox);
+            TextView userphone = (TextView) holder.contactView.findViewById(R.id.phoneBox);
+            ImageView userphot = (ImageView) holder.contactView.findViewById(R.id.contactImage);
+            username.setText(contactlist[position].name);
+            userphone.setText(contactlist[position].number);
+            if (contactlist[position].image != null) {
+                userphot.setImageBitmap(contactlist[position].image);
+            } else {
+                userphot.setImageResource(R.drawable.contact_default);
+            }
         }
     }
 
