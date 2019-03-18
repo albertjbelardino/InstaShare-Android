@@ -16,7 +16,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleInstance"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -37,7 +37,20 @@
         <activity
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings" />
-        <activity android:name=".SignUpLogInActivity"></activity>
+        <activity android:name=".SignUpLogInActivity" />
+        <activity android:name=".SignUpActivity" />
+
+
+        <activity android:name=".LogInActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN">
+                </action>
+                <category android:name="android.intent.category.MAIN"></category>
+            </intent-filter>
+
+        </activity>
     </application>
 
 </manifest>

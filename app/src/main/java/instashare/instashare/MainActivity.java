@@ -2,13 +2,17 @@ package instashare.instashare;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Canvas;
 import android.hardware.camera2.CameraAccessException;
+import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.AttributeSet;
+import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
@@ -20,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
     Button takepicbutton;
     SurfaceView sv;
     CameraHandler ch;
+    final String LOGGED_IN = "alkdhksadfadfsdfhst";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +38,13 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        if(!PreferenceManager.getDefaultSharedPreferences(this).getBoolean(LOGGED_IN, false)) {
+            Intent i = new Intent(this, LogInActivity.class);
+            startActivity(i);
+        }
     }
+
+
 
     public void setUpPictureTaking()
     {
@@ -93,7 +104,15 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        ch.endCapture();
         super.onDestroy();
+        ch.endCapture();
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+
     }
 }
