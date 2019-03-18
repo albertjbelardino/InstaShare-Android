@@ -73,7 +73,7 @@ public class CameraHandler {
                         .getOutputSizes(SurfaceHolder.class)[0].getWidth(),
                 cm.getCameraCharacteristics(cm.getCameraIdList()[0])
                         .get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)
-                        .getOutputSizes(SurfaceHolder.class)[0].getHeight(), ImageFormat.JPEG, 1);
+                        .getOutputSizes(SurfaceHolder.class)[0].getHeight(), ImageFormat.JPEG, 2);
         final SurfaceView finalview = sv;
          SurfaceHolder surfhold = finalview.getHolder();
         surfhold.setKeepScreenOn(true);
