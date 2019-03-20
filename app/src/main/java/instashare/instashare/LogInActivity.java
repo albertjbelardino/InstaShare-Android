@@ -3,6 +3,7 @@ package instashare.instashare;
 import android.app.Activity;
 import android.content.Intent;
 import android.preference.PreferenceManager;
+import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -41,6 +42,16 @@ public class LogInActivity extends AppCompatActivity {
 
 
                 }
+            }
+        });
+
+        Button signButton = findViewById(R.id.signButton);
+
+        signButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(view.getContext(), SignUpActivity.class);
+                startActivity(intent);
             }
         });
     }
