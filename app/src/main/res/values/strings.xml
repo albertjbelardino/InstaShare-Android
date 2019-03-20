@@ -82,4 +82,9 @@
     <string name="button">Save</string>
     <string name="phone">Phone Number</string>
     <string name="log">Log In</string>
+    <string name="sign">Sign Up</string>
+    <string name="name">First/Last Name</string>
+    <string name="first">First</string>
+    <string name="last">Last</string>
+    <string name="namefill">Username</string>
 </resources>
