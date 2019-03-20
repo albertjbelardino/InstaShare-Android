@@ -25,17 +25,21 @@ public class SignUpActivity extends AppCompatActivity {
                 EditText textPassword = (EditText)  findViewById(R.id.textPassword);
                 EditText textPasswordConfirm = (EditText)  findViewById(R.id.textPasswordConfirm);
                 EditText textPhone = (EditText) findViewById(R.id.textPhone);
+                EditText textFirst = (EditText) findViewById(R.id.TextFirst);
+                EditText textLast = (EditText) findViewById(R.id.TextLast);
                 boolean test1 = textUsername.getText().toString().trim().length()==0;
                 boolean test2 = textEmailAddress.getText().toString().trim().length()==0;
                 boolean test3 = textPassword.getText().toString().trim().length()==0;
                 boolean test4 = textPasswordConfirm.getText().toString().trim().length()==0;
                 boolean test5 = textPhone.getText().toString().trim().length()==0;
-                boolean test6 = (!textPassword.getText().toString().equals(textPasswordConfirm.getText().toString()));
+                boolean test6 = (textFirst.getText().toString().trim().length()==0||textLast.getText().toString().trim().length()==0);
+                boolean test7 = (!textPassword.getText().toString().equals(textPasswordConfirm.getText().toString()));
+
                 System.out.println(textPassword.getText().toString());
-                if (test1||test2||test3||test4||test5){
+                if (test1||test2||test3||test4||test5||test6){
                     Toast.makeText(SignUpActivity.this, "All elements must be filled.", Toast.LENGTH_SHORT).show();
                 }
-                else if(test6){
+                else if(test7){
                     Toast.makeText(SignUpActivity.this, "Password and password confirmation must match.", Toast.LENGTH_SHORT).show();
                 }
                 else{
