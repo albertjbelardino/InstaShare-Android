@@ -29,6 +29,7 @@ public class SignUpActivity extends AppCompatActivity {
                 EditText textLast = (EditText) findViewById(R.id.TextLast);
                 boolean test1 = textUsername.getText().toString().trim().length()==0;
                 boolean test2 = textEmailAddress.getText().toString().trim().length()==0;
+                //asndasndjkla
                 boolean test3 = textPassword.getText().toString().trim().length()==0;
                 boolean test4 = textPasswordConfirm.getText().toString().trim().length()==0;
                 boolean test5 = textPhone.getText().toString().trim().length()==0;
