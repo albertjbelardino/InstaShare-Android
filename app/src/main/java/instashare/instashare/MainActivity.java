@@ -33,11 +33,17 @@ public class MainActivity extends AppCompatActivity {
         getPermissions();
         setUpPictureTaking();
 
-        try {
-            LoginService.login("user", "123");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        new Thread(new Runnable(){
+            @Override
+            public void run() {
+                try {
+                    LoginService.login("user", "123");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+
         if(!PreferenceManager.getDefaultSharedPreferences(this).getBoolean(LOGGED_IN, false)) {
             Intent i = new Intent(this, LogInActivity.class);
             startActivity(i);
