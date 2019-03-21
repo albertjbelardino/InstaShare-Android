@@ -1,5 +1,7 @@
 package instashare.instashare;
 
+import android.util.Log;
+
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -11,7 +13,7 @@ public class LoginService {
     private static String jwt_token = "";
 
     //TODO: For Development, you will need to alter this string so that it points to your computer's localhost
-    private static final String baseURL = "http://192.168.163.1:8000/api/token/";
+    private static final String baseURL = "http://10.0.0.98:8000/api/token/";
 
     public static boolean login(String username, String password) throws IOException {
 
@@ -47,7 +49,7 @@ public class LoginService {
             while ((text = br.readLine()) != null) {
                 json_response += text;
             }
-            System.out.println(json_response);
+            Log.i("LOGIN_TEST", json_response);
         } else {
             bufferedReader = new BufferedReader(new InputStreamReader(postConnection.getErrorStream()));
             System.out.println(responseCode);
