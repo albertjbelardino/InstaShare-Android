@@ -2,6 +2,9 @@ package instashare.instashare;
 
 import android.util.Log;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -50,6 +53,13 @@ public class LoginService {
                 json_response += text;
             }
             Log.i("LOGIN_TEST", json_response);
+            try {
+                JSONObject json = new JSONObject(json_response);
+                jwt_token = json.getString("access");
+                Log.i("LOGIN_JWT", jwt_token);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         } else {
             bufferedReader = new BufferedReader(new InputStreamReader(postConnection.getErrorStream()));
             System.out.println(responseCode);
