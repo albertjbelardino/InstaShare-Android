@@ -219,10 +219,11 @@ public class CameraHandler {
 
 
     public void takePictureNow() throws CameraAccessException {
+        Log.d("ORIENTATION", Integer.toString(a.getResources().getConfiguration().orientation));
         CaptureRequest.Builder cr = cd.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
         cr.addTarget(irsurface);
 
-        Log.d("TAG", Integer.toString(a.getResources().getConfiguration().orientation));
+        Log.d("TAG", Integer.toString(((WindowManager) a.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getOrientation()));
         ccsession.capture(cr.build(), new CameraCaptureSession.CaptureCallback() {
             @Override
             public void onCaptureStarted(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, long timestamp, long frameNumber) {
@@ -230,6 +231,8 @@ public class CameraHandler {
             }
         }, sv.getHandler());
     }
+
+
 
 }
 
