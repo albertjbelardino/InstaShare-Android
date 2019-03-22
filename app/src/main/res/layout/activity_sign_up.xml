@@ -124,7 +124,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.514"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/TextFirst" />
+        app:layout_constraintTop_toBottomOf="@+id/TexTFirst" />
 
     <TextView
         android:id="@+id/textView5"
@@ -156,7 +156,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textEmailAddress" />
 
     <EditText
-        android:id="@+id/TextFirst"
+        android:id="@+id/TexTFirst"
         android:layout_width="114dp"
         android:layout_height="41dp"
         android:layout_marginStart="33dp"
@@ -182,7 +182,7 @@
         android:text="@string/last"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/TextFirst"
+        app:layout_constraintStart_toEndOf="@+id/TexTFirst"
         app:layout_constraintTop_toBottomOf="@+id/textPasswordConfirm" />
 
     <TextView
@@ -195,7 +195,7 @@
         android:layout_marginBottom="101dp"
         android:text="@string/name"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/TextFirst"
+        app:layout_constraintEnd_toStartOf="@+id/TexTFirst"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView4"
         app:layout_constraintVertical_bias="1.0" />

@@ -6,11 +6,13 @@ import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Camera;
 import android.graphics.ImageFormat;
+import android.graphics.Picture;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
@@ -114,6 +116,7 @@ public class CameraHandler {
                     mybitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
                     fos.flush();
                     fos.close();
+                    showImage(finalfile);
 
                 }catch (Exception e){
                     e.printStackTrace();
@@ -230,6 +233,13 @@ public class CameraHandler {
                 super.onCaptureStarted(session, request, timestamp, frameNumber);
             }
         }, sv.getHandler());
+    }
+
+    public void showImage(File imagefile)
+    {
+        Intent picin = new Intent(a, PictureTakenActivity.class);
+        picin.putExtra("myimage", imagefile.getAbsolutePath());
+        a.startActivity(picin);
     }
 
 
