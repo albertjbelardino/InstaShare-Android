@@ -1,11 +1,40 @@
 package instashare.instashare;
 
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.UnrecoverableKeyException;
+import java.security.spec.InvalidKeySpecException;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 public class SignUpActivity extends AppCompatActivity {
 
@@ -45,8 +74,52 @@ public class SignUpActivity extends AppCompatActivity {
                 }
                 else{
                     Toast.makeText(SignUpActivity.this, "Hello "+textUsername.getText().toString(), Toast.LENGTH_SHORT).show();
+
+                    RequestQueue rq = Volley.newRequestQueue(getApplicationContext());
+                    final Map<String, String> data = new HashMap<String, String>();
+                        data.put("username", textUsername.getText().toString());
+                        data.put("password", textPassword.getText().toString());
+                        data.put("email", textEmailAddress.getText().toString());
+                        data.put("first_name", textFirst.getText().toString());
+                        data.put("last_name", textLast.getText().toString());
+                        data.put("phone_number", textPhone.getText().toString());
+
+
+                    Log.d("INFO", data.toString());
+
+
+                    JsonObjectRequest jor = new JsonObjectRequest(Request.Method.POST,"http://10.110.41.120:8000/api/register/", new JSONObject(data), new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+
+                            Log.d("response", response.toString());
+                            try {
+                                response.getString("id");
+                                finish();
+                            } catch (JSONException e) {
+                                Toast.makeText(getApplicationContext(), "BAD SIGNUP", Toast.LENGTH_SHORT).show();
+                            }
+
+                        }
+
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Log.d("ERROR", error.toString());
+                        }
+                    });
+                    //{
+//                        @Override
+//                        protected Map<String, String> getParams() throws AuthFailureError {
+//
+//                            return data;
+//                        }
+//                    };
+                    rq.add(jor);
+
                 }
             }
         });
+
     }
 }

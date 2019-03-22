@@ -1,20 +1,49 @@
 package instashare.instashare;
 
+import android.app.ActionBar;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.media.Image;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.w3c.dom.Text;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class PictureTakenActivity extends AppCompatActivity {
 
     String imagepath;
     ImageView iv;
     Button sendimagebutton;
+    final String MY_TOKEN = "sljdgbnrnkjsdfbgkjgnxfbnjkdgnjk";
+    PopupWindow popupWindow;
+
 
 
     @Override
@@ -23,15 +52,84 @@ public class PictureTakenActivity extends AppCompatActivity {
         setContentView(R.layout.activity_picture_taken);
         imagepath = getIntent().getStringExtra("myimage");
         iv = findViewById(R.id.myPicture);
-        Bitmap bm = BitmapFactory.decodeFile(imagepath);
+        final Bitmap bm = BitmapFactory.decodeFile(imagepath);
+        popupWindow  = new PopupWindow(this);
 
 
         iv.setImageBitmap(rotateBitmap(bm));
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bm.compress(Bitmap.CompressFormat.JPEG, 100, baos); //bm is the bitmap object
+        byte[] b = baos.toByteArray();
+        try {
+            baos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        final String sfString = Base64.encodeToString(b, Base64.DEFAULT);
 
         sendimagebutton = findViewById(R.id.InstashareButton);
         sendimagebutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                final Map<String, String> data = new HashMap<String, String>();
+                data.put("base_64", sfString);
+                Log.d("INFO", data.toString());
+                Log.d("MY TOKEN", PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString(MY_TOKEN, "this is not a token"));
+
+                RequestQueue rq = Volley.newRequestQueue(getApplicationContext());
+
+                JsonObjectRequest jor = new JsonObjectRequest(Request.Method.POST,"http://10.110.41.120:8000/api/demo64/", new JSONObject(data), new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d("response", response.toString());
+                        TextView tv = new TextView(getApplicationContext());
+                        try {
+                            tv.setText("Match: " + response.getString("first_name") + " " + response.getString("last_name"));
+                            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+                                    LinearLayout.LayoutParams.WRAP_CONTENT);
+
+                            LinearLayout ll = new LinearLayout(getApplicationContext());
+                            ll.setOrientation(LinearLayout.VERTICAL);
+                            ll.addView(tv, lp);
+                            PopupWindow puw = new PopupWindow(getApplicationContext());
+                            puw.setContentView(ll);
+                            puw.showAtLocation(ll, Gravity.BOTTOM, 10, 10);
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+
+
+
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d("ERROR", error.toString());
+                    }
+                })
+                {
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+
+                        Map<String, String> headers = new HashMap<>();
+                        headers.put("Authorization", "Bearer " +
+                                PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString(MY_TOKEN, "this is not a token"));
+                        return headers;
+                    }
+                };
+                //{
+//                        @Override
+//                        protected Map<String, String> getParams() throws AuthFailureError {
+//
+//                            return data;
+//                        }
+//                    };
+                rq.add(jor);
 
             }
         });
