@@ -63,6 +63,7 @@ public class ContactActivity extends AppCompatActivity {
 
                         if (inputStream != null) {
                             photo = BitmapFactory.decodeStream(inputStream);
+                            //sendContactToServer();
                             inputStream.close();
                         }
 
@@ -100,6 +101,11 @@ public class ContactActivity extends AppCompatActivity {
         rv.setAdapter(cla);
         rv.setLayoutManager(llm);
         rv.setHasFixedSize(true);
+
+    }
+
+    public void sendContactToServer(String firstname, String lastname, String number, Bitmap photo)
+    {
 
     }
 
