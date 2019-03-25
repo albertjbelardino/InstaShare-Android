@@ -7,68 +7,57 @@ import android.preference.PreferenceManager;
 import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.concurrent.CountDownLatch;
 
 public class LogInActivity extends AppCompatActivity {
-    final String LOGGED_IN = "alkdhksadfadfsdfhst";
-    final String MY_TOKEN = "sljdgbnrnkjsdfbgkjgnxfbnjkdgnjk";
 
+    private ArrayList<Thread> arrThreads;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_log_in);
+        LoginService.logout();
+        Log.i("HEY_THERE", LoginService.jwt_token);
+        arrThreads = new ArrayList<Thread>();
 
-
-        Button logButton = findViewById(R.id.logbutton);
+        final Button loginButton = findViewById(R.id.logbutton);
         final Activity a = this;
-        logButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                final EditText textLogUsername = (EditText) findViewById(R.id.usernameLog);
-                final EditText textLogPassword = (EditText) findViewById(R.id.passwordLog);
-                boolean test1 = textLogUsername.getText().toString().trim().length()==0;
-                boolean test2 = textLogPassword.getText().toString().trim().length()==0;
-                if(test1||test2){
-                    Toast.makeText(LogInActivity.this, "Incorrect username or password.", Toast.LENGTH_SHORT).show();
-                }
-                else{
+        loginButton.setOnClickListener(new View.OnClickListener() {
+               @Override
+               public void onClick(View view) {
+                   final EditText usernameEditText = (EditText) findViewById(R.id.usernameLog);
+                   final EditText passwordEditText = (EditText) findViewById(R.id.passwordLog);
+                   CountDownLatch countDownLatch = new CountDownLatch(1);
+                   LoginThread loginThread = new LoginThread(usernameEditText.getText().toString(),
+                           passwordEditText.getText().toString(), "Login Thread", countDownLatch);
 
-                    new Thread(new Runnable(){
-                        @Override
-                        public void run() {
-                            try {
-                                String token = LoginService.login(textLogUsername.getText().toString(), textLogPassword.getText().toString());
-                                if(!token.equals(""))
-                                {
-                                    PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putBoolean(LOGGED_IN, true).commit();
-                                    PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putString(MY_TOKEN, token).commit();
-                                    Intent i = new Intent(a, MainActivity.class);
-                                    startActivity(i);
-                                    finish();
-                                }
-                                else
-                                {
-                                    Looper.prepare();
-                                    Toast.makeText(a, "INCORRECT LOGIN INFO", Toast.LENGTH_SHORT).show();
-                                }
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }).start();
-                    //Toast.makeText(LogInActivity.this, "Hello "+textLogUsername.getText().toString(), Toast.LENGTH_SHORT).show();
+                   loginThread.start();
+                   try {
+                       countDownLatch.await();
+                   } catch (InterruptedException e) {
+                       e.printStackTrace();
+                   }
 
-
-
-                }
-            }
-        });
+                   if (!LoginService.jwt_token.equals("")) {
+                       Intent i = new Intent(a, MainActivity.class);
+                       startActivity(i);
+                       finish();
+                   } else {
+                       Looper.prepare();
+                       Toast.makeText(a, "INCORRECT LOGIN INFO", Toast.LENGTH_SHORT).show();
+                   }
+               }
+           }
+        );
 
         Button signButton = findViewById(R.id.signButton);
 

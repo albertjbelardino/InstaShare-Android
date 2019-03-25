@@ -16,9 +16,9 @@ public class LoginService {
     public static String jwt_token = "";
 
     //TODO: For Development, you will need to alter this string so that it points to your computer's localhost
-    private static final String baseURL = "http://10.0.0.98:8000/api/token/";
+    private static final String baseURL = "http://10.108.33.207:8000/api/token/";
 
-    public static String login(String username, String password) throws IOException {
+    public static void login(String username, String password) throws IOException {
 
         //build post object
         String postJSON = "{\"username\":" + "\"" + username + "\","
@@ -65,11 +65,9 @@ public class LoginService {
             System.out.println(responseCode);
             System.out.println();
         }
-
-        return jwt_token;
     }
 
-    private static void logout() {
+    public static void logout() {
         jwt_token = "";
     }
 }
