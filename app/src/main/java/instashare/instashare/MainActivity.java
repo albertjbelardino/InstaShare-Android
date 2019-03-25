@@ -37,6 +37,19 @@ public class MainActivity extends AppCompatActivity {
             Intent i = new Intent(this, LogInActivity.class);
             startActivity(i);
         }
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    LoginService.login("user", "123");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        thread.start();
+
+        ContactUploadService.uploadAllContacts(getContentResolver(), this, getApplicationContext());
     }
 
 

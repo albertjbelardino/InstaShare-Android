@@ -6,32 +6,79 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
 import android.util.Base64;
 import android.util.Log;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONObject;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 import static android.content.ContentValues.TAG;
 
 public class ContactUploadService {
 
-    public static boolean uploadSingleContact(String name, String number, Bitmap image) {
+    public static boolean uploadSingleContact(String name, String number, Bitmap image, Context appContext) {
 
-        String postJSON = "{\"first_name\":" + "\"" + name + "\","
-                + "\"phone_number\":" + "\"" + number + "\"}"
-                + "\"contact_photo\":" + "\"" + getFileToByte(image) + "\"}";
+        final HashMap<String, String> postJSON = new HashMap<String, String>();
+        postJSON.put("first_name", name);
+        postJSON.put("phone_number", number);
+        postJSON.put("contact_photo", getFileToByte(image));
+
+
+        RequestQueue requestQueue = Volley.newRequestQueue(appContext);
+
+        JsonObjectRequest jor = new JsonObjectRequest(Request.Method.POST, "http://10.0.0.98/api/uploadContact64/",
+                new JSONObject(postJSON), new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.i("UPLOAD_CONTACT_RESPONSE", response.toString());
+                Log.i("CONTACT_NAME_ON_RESPONSE", postJSON.get("first_name"));
+            }
+        },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.i("ERROR", error.toString());
+                    }
+                }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<String, String>();
+                headers.put("Authorization", "Bearer " + LoginService.jwt_token);
+                return headers;
+            }
+        };
+
+        requestQueue.add(jor);
+
         return false;
     }
 
-    public static boolean uploadAllContacts(ContentResolver cr, Context context) {
+    public static boolean uploadAllContacts(ContentResolver cr, Context context, Context appContext) {
         Contact[] contacts = getContactList(cr, context);
 
         for(Contact contact : contacts) {
-            if(!uploadSingleContact(contact.name, contact.number, contact.image)) {
-                Log.i("CONTACT_UPLOAD_ERROR", contact.name + " " + contact.number + " ");
+            if(contact != null) {
+                if (Objects.equals(contact.name, "Test")) {
+                    if (!uploadSingleContact(contact.name, contact.number, contact.image, appContext)) {
+                        Log.i("CONTACT_UPLOAD_ERROR", contact.name + " " + contact.number + " ");
+                    }
+                }
             }
         }
 
