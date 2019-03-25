@@ -19,15 +19,12 @@ import java.util.concurrent.CountDownLatch;
 
 public class LogInActivity extends AppCompatActivity {
 
-    private ArrayList<Thread> arrThreads;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_log_in);
         LoginService.logout();
         Log.i("HEY_THERE", LoginService.jwt_token);
-        arrThreads = new ArrayList<Thread>();
 
         final Button loginButton = findViewById(R.id.logbutton);
         final Activity a = this;
