@@ -52,7 +52,8 @@
                 <category android:name="android.intent.category.MAIN" />
             </intent-filter>
         </activity>
-        <activity android:name=".PictureTakenActivity"></activity>
+        <activity android:name=".PictureTakenActivity"
+            android:launchMode="singleInstance"></activity>
     </application>
 
 </manifest>
