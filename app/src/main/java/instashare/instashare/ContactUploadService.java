@@ -2,35 +2,44 @@ package instashare.instashare;
 
 import android.content.ContentResolver;
 import android.content.ContentUris;
+import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Bundle;
 import android.provider.ContactsContract;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.util.Base64;
 import android.util.Log;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 import static android.content.ContentValues.TAG;
 
-public class ContactActivity extends AppCompatActivity {
+public class ContactUploadService {
 
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_contacts);
+    public static boolean uploadSingleContact(String name, String number, Bitmap image) {
 
-        getContactList();
+        String postJSON = "{\"first_name\":" + "\"" + name + "\","
+                + "\"phone_number\":" + "\"" + number + "\"}"
+                + "\"contact_photo\":" + "\"" + getFileToByte(image) + "\"}";
+        return false;
     }
 
-    private void getContactList() {
+    public static boolean uploadAllContacts(ContentResolver cr, Context context) {
+        Contact[] contacts = getContactList(cr, context);
+
+        for(Contact contact : contacts) {
+            if(!uploadSingleContact(contact.name, contact.number, contact.image)) {
+                Log.i("CONTACT_UPLOAD_ERROR", contact.name + " " + contact.number + " ");
+            }
+        }
+
+        return true;
+    }
+
+    public static Contact[] getContactList(ContentResolver cr, Context context) {
         int contactnum = 0;
-        ContentResolver cr = getContentResolver();
         Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
                 null, null, null, null);
 
@@ -49,15 +58,15 @@ public class ContactActivity extends AppCompatActivity {
                             null,
                             ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?",
                             new String[]{id}, null);
-                        pCur.moveToNext();
-                        String phoneNo = pCur.getString(pCur.getColumnIndex(
-                                ContactsContract.CommonDataKinds.Phone.NUMBER));
+                    pCur.moveToNext();
+                    String phoneNo = pCur.getString(pCur.getColumnIndex(
+                            ContactsContract.CommonDataKinds.Phone.NUMBER));
 
-                    Bitmap photo = BitmapFactory.decodeResource(this.getResources(),
+                    Bitmap photo = BitmapFactory.decodeResource(context.getResources(),
                             R.drawable.ic_launcher_background);
 
                     try {
-                        InputStream inputStream = ContactsContract.Contacts.openContactPhotoInputStream(this.getContentResolver(),
+                        InputStream inputStream = ContactsContract.Contacts.openContactPhotoInputStream(context.getContentResolver(),
                                 ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, new Long(id)));
 
                         if (inputStream != null) {
@@ -73,8 +82,8 @@ public class ContactActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                     contacts[contactnum] = new Contact(photo, name, phoneNo);
-                        Log.i(TAG, "Name: " + name);
-                        Log.i(TAG, "Phone Number: " + phoneNo);
+                    Log.i(TAG, "Name: " + name);
+                    Log.i(TAG, "Phone Number: " + phoneNo);
 
 
                     pCur.close();
@@ -84,19 +93,23 @@ public class ContactActivity extends AppCompatActivity {
             if(cur!=null){
                 cur.close();
             }
-            setUpRecyclerView(contacts);
+            return contacts;
         }
+        return new Contact[]{};
     }
 
-    public void setUpRecyclerView(Contact[] contactlist)
-    {
-        RecyclerView rv = findViewById(R.id.contactRecycle);
-        ContactListAdapter cla = new ContactListAdapter(contactlist);
-        LinearLayoutManager llm = new LinearLayoutManager(this);
-        rv.setAdapter(cla);
-        rv.setLayoutManager(llm);
-        rv.setHasFixedSize(true);
+    public static String getFileToByte(Bitmap bmp){
+        ByteArrayOutputStream bos = null;
+        byte[] bt = null;
+        String encodeString = null;
+        try{
+            bos = new ByteArrayOutputStream();
+            bmp.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+            bt = bos.toByteArray();
+            encodeString = Base64.encodeToString(bt, Base64.DEFAULT);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return encodeString;
     }
-
 }
-
