@@ -88,7 +88,7 @@ public class SignUpActivity extends AppCompatActivity {
                     Log.d("INFO", data.toString());
 
 
-                    JsonObjectRequest jor = new JsonObjectRequest(Request.Method.POST,"http://10.110.41.120:8000/api/register/", new JSONObject(data), new Response.Listener<JSONObject>() {
+                    JsonObjectRequest jor = new JsonObjectRequest(Request.Method.POST,"http://10.110.32.66:8000/api/register/", new JSONObject(data), new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
 

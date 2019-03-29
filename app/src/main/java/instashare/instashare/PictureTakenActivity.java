@@ -27,9 +27,11 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Text;
@@ -88,57 +90,58 @@ public class PictureTakenActivity extends AppCompatActivity {
                 data.put("base_64", sfString);
                 Log.d("INFO", data.toString());
                 Log.d("MY TOKEN", PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString(MY_TOKEN, "this is not a token"));
+                JSONObject jsonob = new JSONObject(data);
 
                 RequestQueue rq = Volley.newRequestQueue(getApplicationContext());
+                    JsonArrayRequest jor = new JsonArrayRequest(Request.Method.POST, "http://10.110.32.66:8000/api/demo64/", new JSONObject(data), new Response.Listener<JSONArray>() {
+                        @Override
+                        public void onResponse(JSONArray response) {
+                            Log.d("response", response.toString());
+//                        TextView tv = new TextView(getApplicationContext());
+//                        try {
+//                            tv.setText("Match: " + response.getString("first_name") + " " + response.getString("last_name"));
+//                            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+//                                    LinearLayout.LayoutParams.WRAP_CONTENT);
+//
+//                            tv.setTextSize(30);
+//                            tv.setBackgroundColor(Color.WHITE);
+//                            LinearLayout ll = new LinearLayout(getApplicationContext());
+//                            ll.setOrientation(LinearLayout.VERTICAL);
+//                            ll.addView(tv, lp);
+//                            PopupWindow puw = new PopupWindow(getApplicationContext());
+//                            puw.setAnimationStyle(-1);
+//                            puw.setContentView(ll);
+//                            puw.setFocusable(true);
+//                            dialog.dismiss();
+//                            puw.showAtLocation(iv, Gravity.CENTER, 0, 0);
+//
+//                        } catch (JSONException e) {
+//                            e.printStackTrace();
+//                        }
 
-                JsonObjectRequest jor = new JsonObjectRequest(Request.Method.POST,"http://10.110.41.120:8000/api/demo64/", new JSONObject(data), new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Log.d("response", response.toString());
-                        TextView tv = new TextView(getApplicationContext());
-                        try {
-                            tv.setText("Match: " + response.getString("first_name") + " " + response.getString("last_name"));
-                            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
-                                    LinearLayout.LayoutParams.WRAP_CONTENT);
-
-                            tv.setTextSize(30);
-                            tv.setBackgroundColor(Color.WHITE);
-                            LinearLayout ll = new LinearLayout(getApplicationContext());
-                            ll.setOrientation(LinearLayout.VERTICAL);
-                            ll.addView(tv, lp);
-                            PopupWindow puw = new PopupWindow(getApplicationContext());
-                            puw.setAnimationStyle(-1);
-                            puw.setContentView(ll);
-                            puw.setFocusable(true);
-                            dialog.dismiss();
-                            puw.showAtLocation(iv, Gravity.CENTER, 0, 0);
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
                         }
 
-                    }
 
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            dialog.dismiss();
+                            displayErrorMessage();
+                            Log.d("ERROR", error.toString());
+                        }
+                    }) {
+                        @Override
+                        public Map<String, String> getHeaders() throws AuthFailureError {
 
-
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        dialog.dismiss();
-                        displayErrorMessage();
-                        Log.d("ERROR", error.toString());
-                    }
-                })
-                {
-                    @Override
-                    public Map<String, String> getHeaders() throws AuthFailureError {
-
-                        Map<String, String> headers = new HashMap<>();
-                        headers.put("Authorization", "Bearer " +
-                                PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString(MY_TOKEN, "this is not a token"));
-                        return headers;
-                    }
-                };
+                            Map<String, String> headers = new HashMap<>();
+                            headers.put("Authorization", "Bearer " +
+                                    PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString(MY_TOKEN, "this is not a token"));
+                            return headers;
+                        }
+                    };
+                    jor.setRetryPolicy(new DefaultRetryPolicy(30000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+                    rq.add(jor);
+                }
                 //{
 //                        @Override
 //                        protected Map<String, String> getParams() throws AuthFailureError {
@@ -146,10 +149,9 @@ public class PictureTakenActivity extends AppCompatActivity {
 //                            return data;
 //                        }
 //                    };
-                jor.setRetryPolicy(new DefaultRetryPolicy(30000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-                rq.add(jor);
 
-            }
+
+
         });
     }
 
