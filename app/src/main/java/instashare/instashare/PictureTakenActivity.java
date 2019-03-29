@@ -1,8 +1,10 @@
 package instashare.instashare;
 
 import android.app.ActionBar;
+import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.media.Image;
 import android.preference.PreferenceManager;
@@ -20,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -70,9 +73,16 @@ public class PictureTakenActivity extends AppCompatActivity {
         final String sfString = Base64.encodeToString(b, Base64.DEFAULT);
 
         sendimagebutton = findViewById(R.id.InstashareButton);
+        final ProgressDialog dialog = new ProgressDialog(this); // this = YourActivity
+        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        dialog.setTitle("Loading");
+        dialog.setMessage("Loading. Please wait...");
+        dialog.setIndeterminate(true);
+        dialog.setCanceledOnTouchOutside(false);
         sendimagebutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                dialog.show();
 
                 final Map<String, String> data = new HashMap<String, String>();
                 data.put("base_64", sfString);
@@ -91,12 +101,17 @@ public class PictureTakenActivity extends AppCompatActivity {
                             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
                                     LinearLayout.LayoutParams.WRAP_CONTENT);
 
+                            tv.setTextSize(30);
+                            tv.setBackgroundColor(Color.WHITE);
                             LinearLayout ll = new LinearLayout(getApplicationContext());
                             ll.setOrientation(LinearLayout.VERTICAL);
                             ll.addView(tv, lp);
                             PopupWindow puw = new PopupWindow(getApplicationContext());
+                            puw.setAnimationStyle(-1);
                             puw.setContentView(ll);
-                            puw.showAtLocation(ll, Gravity.BOTTOM, 10, 10);
+                            puw.setFocusable(true);
+                            dialog.dismiss();
+                            puw.showAtLocation(iv, Gravity.CENTER, 0, 0);
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -109,6 +124,8 @@ public class PictureTakenActivity extends AppCompatActivity {
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        dialog.dismiss();
+                        displayErrorMessage();
                         Log.d("ERROR", error.toString());
                     }
                 })
@@ -129,6 +146,7 @@ public class PictureTakenActivity extends AppCompatActivity {
 //                            return data;
 //                        }
 //                    };
+                jor.setRetryPolicy(new DefaultRetryPolicy(30000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
                 rq.add(jor);
 
             }
@@ -146,5 +164,24 @@ public class PictureTakenActivity extends AppCompatActivity {
         Bitmap rotatedBitmap = Bitmap.createBitmap(scaledBitmap, 0, 0, scaledBitmap.getWidth(), scaledBitmap.getHeight(), matrix, true);
 
         return rotatedBitmap;
+    }
+
+    public void displayErrorMessage()
+    {
+        TextView tv = new TextView(getApplicationContext());
+            tv.setText("NO MATCH FOUND");
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT);
+
+            tv.setTextSize(30);
+            tv.setBackgroundColor(Color.WHITE);
+            LinearLayout ll = new LinearLayout(getApplicationContext());
+            ll.setOrientation(LinearLayout.VERTICAL);
+            ll.addView(tv, lp);
+            PopupWindow puw = new PopupWindow(getApplicationContext());
+            puw.setAnimationStyle(-1);
+            puw.setContentView(ll);
+            puw.setFocusable(true);
+            puw.showAtLocation(iv, Gravity.CENTER, 0, 0);
     }
 }

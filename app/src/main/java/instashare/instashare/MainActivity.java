@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Canvas;
 import android.hardware.camera2.CameraAccessException;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -32,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         getPermissions();
         setUpPictureTaking();
+        Log.d("are logged?", Boolean.toString(PreferenceManager.getDefaultSharedPreferences(this).getBoolean(LOGGED_IN, false)));
 
         if(!PreferenceManager.getDefaultSharedPreferences(this).getBoolean(LOGGED_IN, false)) {
             Intent i = new Intent(this, LogInActivity.class);
@@ -99,6 +101,16 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void openSettingsPage(View v)
+    {
+//        Intent intent = new Intent(this, SettingsActivity.class);
+//        startActivity(intent);
+        //not opening settings page now
+        PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(LOGGED_IN, false).commit();
+        System.exit(0);
+
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -109,7 +121,5 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-
-
     }
 }
