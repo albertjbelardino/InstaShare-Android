@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -14,6 +15,7 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
 
 
     private Contact[] contactlist;
+    boolean selecting;
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         public View contactView;
@@ -24,9 +26,11 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
         }
     }
 
-    public ContactListAdapter(Contact[] contactlist)
+    public ContactListAdapter(Contact[] contactlist, boolean selecting)
     {
         this.contactlist = contactlist;
+
+        this.selecting = selecting;
     }
 
     @Override
@@ -56,6 +60,11 @@ public class ContactListAdapter extends RecyclerView.Adapter<ContactListAdapter.
             ImageView userphot = (ImageView) holder.contactView.findViewById(R.id.contactImage);
             username.setText(contactlist[position].name);
             userphone.setText(contactlist[position].number);
+            CheckBox cb = holder.contactView.findViewById(R.id.checkBox);
+            if(!selecting)
+            {
+                cb.setVisibility(View.GONE);
+            }
             if (contactlist[position].image != null) {
                 userphot.setImageBitmap(contactlist[position].image);
             } else {

@@ -2,7 +2,7 @@ package instashare.instashare;
 
 public class ApiContract {
 
-    public static final String baseUrl = "http://10.108.47.241:8000/";
+    public static final String baseUrl = "http://10.108.33.105:8000/";
 
     public static String loginUrl() {
         return baseUrl + "api/token/";
@@ -15,4 +15,6 @@ public class ApiContract {
     public static String registerUrl() {
         return baseUrl + "api/register/";
     }
+
+    public static String sendPicture(){return baseUrl + "/api/demo64/";}
 }

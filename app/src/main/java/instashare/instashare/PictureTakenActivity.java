@@ -93,7 +93,7 @@ public class PictureTakenActivity extends AppCompatActivity {
                 JSONObject jsonob = new JSONObject(data);
 
                 RequestQueue rq = Volley.newRequestQueue(getApplicationContext());
-                    JsonArrayRequest jor = new JsonArrayRequest(Request.Method.POST, "http://10.110.32.66:8000/api/demo64/", new JSONObject(data), new Response.Listener<JSONArray>() {
+                    JsonArrayRequest jor = new JsonArrayRequest(Request.Method.POST, ApiContract.sendPicture(), new JSONObject(data), new Response.Listener<JSONArray>() {
                         @Override
                         public void onResponse(JSONArray response) {
                             Log.d("response", response.toString());

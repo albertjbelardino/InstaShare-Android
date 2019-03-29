@@ -54,7 +54,7 @@ public class ContactActivity extends AppCompatActivity {
         setContentView(R.layout.activity_contacts);
         rq = Volley.newRequestQueue(getApplicationContext());
 
-        //getContactList();
+        getContactList();
         ContactUploadService.uploadAllContacts(getContentResolver(), this, getApplicationContext());
     }
 
@@ -93,7 +93,7 @@ public class ContactActivity extends AppCompatActivity {
                         if (inputStream != null) {
                             photo = BitmapFactory.decodeStream(inputStream);
                             inputStream.close();
-                            sendContactToServer(name, "(A person)", phoneNo, photo);
+                            //sendContactToServer(name, "(A person)", phoneNo, photo);
 
                         }
 
@@ -123,7 +123,7 @@ public class ContactActivity extends AppCompatActivity {
     public void setUpRecyclerView(Contact[] contactlist)
     {
         RecyclerView rv = findViewById(R.id.contactRecycle);
-        ContactListAdapter cla = new ContactListAdapter(contactlist);
+        ContactListAdapter cla = new ContactListAdapter(contactlist, false);
         LinearLayoutManager llm = new LinearLayoutManager(this);
         rv.setAdapter(cla);
         rv.setLayoutManager(llm);
