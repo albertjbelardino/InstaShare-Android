@@ -34,15 +34,19 @@ public class ContactUploadService {
 
     public static boolean uploadSingleContact(String name, String number, Bitmap image, Context appContext) {
 
+        number = number.replace(" ", "");
+        number = number.replace("-", "");
+
+        Log.i("NUMBER_JAWN", number);
         final HashMap<String, String> postJSON = new HashMap<String, String>();
         postJSON.put("first_name", name);
+        postJSON.put("last_name", "hello buddy");
         postJSON.put("phone_number", number);
-        postJSON.put("contact_photo", getFileToByte(image));
-
+        postJSON.put("base_64", getFileToByte(image));
 
         RequestQueue requestQueue = Volley.newRequestQueue(appContext);
 
-        JsonObjectRequest jor = new JsonObjectRequest(Request.Method.POST, "http://10.0.0.98/api/uploadContact64/",
+        JsonObjectRequest jor = new JsonObjectRequest(Request.Method.POST, ApiContract.contactUploadUrl(),
                 new JSONObject(postJSON), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -53,12 +57,13 @@ public class ContactUploadService {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.i("ERROR", error.toString());
+                        Log.i("ERROR", error.toString() + "\n\n\n\n\n\n\n\n" + postJSON.toString());
                     }
                 }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<String, String>();
+                Log.i("jwt_token", LoginService.jwt_token);
                 headers.put("Authorization", "Bearer " + LoginService.jwt_token);
                 return headers;
             }
@@ -74,10 +79,8 @@ public class ContactUploadService {
 
         for(Contact contact : contacts) {
             if(contact != null) {
-                if (Objects.equals(contact.name, "Test")) {
-                    if (!uploadSingleContact(contact.name, contact.number, contact.image, appContext)) {
-                        Log.i("CONTACT_UPLOAD_ERROR", contact.name + " " + contact.number + " ");
-                    }
+                if (!uploadSingleContact(contact.name, contact.number, contact.image, appContext)) {
+                    Log.i("CONTACT_UPLOAD_ERROR", contact.name + " " + contact.number + " ");
                 }
             }
         }
@@ -157,6 +160,7 @@ public class ContactUploadService {
         }catch (Exception e){
             e.printStackTrace();
         }
+        Log.i("upload_pic_string", encodeString);
         return encodeString;
     }
 }

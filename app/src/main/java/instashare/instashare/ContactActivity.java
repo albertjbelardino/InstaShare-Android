@@ -25,7 +25,8 @@ public class ContactActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contacts);
 
-        getContactList();
+        //getContactList();
+        ContactUploadService.uploadAllContacts(getContentResolver(), this, getApplicationContext());
     }
 
     private void getContactList() {

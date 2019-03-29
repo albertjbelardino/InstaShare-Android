@@ -15,9 +15,6 @@ import java.net.URL;
 public class LoginService {
     public static String jwt_token = "";
 
-    //TODO: For Development, you will need to alter this string so that it points to your computer's localhost
-    private static final String baseURL = "http://10.108.33.207:8000/api/token/";
-
     public static void login(String username, String password) throws IOException {
 
         //build post object
@@ -27,7 +24,7 @@ public class LoginService {
         //System.out.println(postJSON);
 
         //build request
-        URL obj = new URL(baseURL);
+        URL obj = new URL(ApiContract.loginUrl());
         HttpURLConnection postConnection = (HttpURLConnection) obj.openConnection();
         postConnection.setRequestMethod("POST");
         postConnection.setDoOutput(true);
