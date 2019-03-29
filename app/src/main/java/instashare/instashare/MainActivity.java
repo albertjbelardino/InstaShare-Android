@@ -39,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
             Intent i = new Intent(this, LogInActivity.class);
             startActivity(i);
         }
+
+        //ContactUploadService.uploadAllContacts(getContentResolver(), this, getApplicationContext());
     }
 
 

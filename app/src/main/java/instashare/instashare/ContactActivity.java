@@ -42,6 +42,7 @@ import static android.content.ContentValues.TAG;
 
 public class ContactActivity extends AppCompatActivity {
 
+
     final String MY_TOKEN = "sljdgbnrnkjsdfbgkjgnxfbnjkdgnjk";
     RequestQueue rq;
 
@@ -53,7 +54,8 @@ public class ContactActivity extends AppCompatActivity {
         setContentView(R.layout.activity_contacts);
         rq = Volley.newRequestQueue(getApplicationContext());
 
-        getContactList();
+        //getContactList();
+        ContactUploadService.uploadAllContacts(getContentResolver(), this, getApplicationContext());
     }
 
     private void getContactList() {
@@ -111,14 +113,11 @@ public class ContactActivity extends AppCompatActivity {
                 }
                 contactnum += 1;
             }
-
+            if(cur!=null){
+                cur.close();
+            }
             setUpRecyclerView(contacts);
         }
-        if(cur!=null){
-            cur.close();
-        }
-
-
     }
 
     public void setUpRecyclerView(Contact[] contactlist)
@@ -129,7 +128,6 @@ public class ContactActivity extends AppCompatActivity {
         rv.setAdapter(cla);
         rv.setLayoutManager(llm);
         rv.setHasFixedSize(true);
-
     }
 
     public void sendContactToServer(String firstname, String lastname, String number, Bitmap photo)
