@@ -56,10 +56,11 @@ public class PictureTakenActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_picture_taken);
         imagepath = getIntent().getStringExtra("myimage");
-        iv = findViewById(R.id.myPicture);
-        final Bitmap bm = BitmapFactory.decodeFile(imagepath);
-        popupWindow  = new PopupWindow(this);
-
+        iv = (ImageView) findViewById(R.id.myPicture);
+        iv.setImageBitmap(BitmapFactory.decodeFile(imagepath));
+        //final Bitmap bm = BitmapFactory.decodeFile(imagepath);
+        //popupWindow  = new PopupWindow(this);
+/*
 
         iv.setImageBitmap(rotateBitmap(bm));
 
@@ -152,7 +153,7 @@ public class PictureTakenActivity extends AppCompatActivity {
 
 
 
-        });
+        });*/
     }
 
     public Bitmap rotateBitmap(Bitmap b)
