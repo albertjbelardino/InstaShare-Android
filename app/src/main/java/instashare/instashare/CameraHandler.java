@@ -12,6 +12,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Camera;
 import android.graphics.ImageFormat;
+import android.graphics.Matrix;
 import android.graphics.Picture;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
@@ -102,6 +103,7 @@ public class CameraHandler {
                 byte[] data = new byte[buffer.capacity()];
                 buffer.get(data);
                 Bitmap mybitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+                mybitmap = rotateBitmap(mybitmap);
 
                 Log.d("ADASD", mybitmap.toString());
                 String filename = System.currentTimeMillis() + ".jpg";
@@ -240,6 +242,19 @@ public class CameraHandler {
         Intent picin = new Intent(a, PictureTakenActivity.class);
         picin.putExtra("myimage", imagefile.getAbsolutePath());
         a.startActivity(picin);
+    }
+
+    public Bitmap rotateBitmap(Bitmap b)
+    {
+        Matrix matrix = new Matrix();
+
+        matrix.postRotate(90);
+
+        Bitmap scaledBitmap = Bitmap.createScaledBitmap(b, b.getWidth(), b.getHeight(), true);
+
+        Bitmap rotatedBitmap = Bitmap.createBitmap(scaledBitmap, 0, 0, scaledBitmap.getWidth(), scaledBitmap.getHeight(), matrix, true);
+
+        return rotatedBitmap;
     }
 
 

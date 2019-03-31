@@ -2,14 +2,19 @@ package instashare.instashare;
 
 import android.app.ActionBar;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.media.Image;
+import android.net.Uri;
 import android.preference.PreferenceManager;
+import android.provider.Telephony;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.telephony.SmsManager;
 import android.util.Base64;
 import android.util.Log;
 import android.view.Gravity;
@@ -30,6 +35,9 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.klinker.android.send_message.Message;
+import com.klinker.android.send_message.Settings;
+import com.klinker.android.send_message.Transaction;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,6 +45,7 @@ import org.json.JSONObject;
 import org.w3c.dom.Text;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -48,6 +57,7 @@ public class PictureTakenActivity extends AppCompatActivity {
     Button sendimagebutton;
     final String MY_TOKEN = "sljdgbnrnkjsdfbgkjgnxfbnjkdgnjk";
     PopupWindow popupWindow;
+    Bitmap myimage;
 
 
 
@@ -58,10 +68,11 @@ public class PictureTakenActivity extends AppCompatActivity {
         imagepath = getIntent().getStringExtra("myimage");
         iv = findViewById(R.id.myPicture);
         final Bitmap bm = BitmapFactory.decodeFile(imagepath);
+        myimage = bm;
         popupWindow  = new PopupWindow(this);
 
 
-        iv.setImageBitmap(rotateBitmap(bm));
+        iv.setImageBitmap(bm);
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bm.compress(Bitmap.CompressFormat.JPEG, 100, baos); //bm is the bitmap object
@@ -84,6 +95,7 @@ public class PictureTakenActivity extends AppCompatActivity {
         sendimagebutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                sendImage(new String[]{"8566026807", "2159419203"});
                 dialog.show();
 
                 final Map<String, String> data = new HashMap<String, String>();
@@ -155,18 +167,6 @@ public class PictureTakenActivity extends AppCompatActivity {
         });
     }
 
-    public Bitmap rotateBitmap(Bitmap b)
-    {
-        Matrix matrix = new Matrix();
-
-        matrix.postRotate(90);
-
-        Bitmap scaledBitmap = Bitmap.createScaledBitmap(b, b.getWidth(), b.getHeight(), true);
-
-        Bitmap rotatedBitmap = Bitmap.createBitmap(scaledBitmap, 0, 0, scaledBitmap.getWidth(), scaledBitmap.getHeight(), matrix, true);
-
-        return rotatedBitmap;
-    }
 
     public void displayErrorMessage()
     {
@@ -185,5 +185,22 @@ public class PictureTakenActivity extends AppCompatActivity {
             puw.setContentView(ll);
             puw.setFocusable(true);
             puw.showAtLocation(iv, Gravity.CENTER, 0, 0);
+    }
+
+    public void sendImage(String[] phonenumbers)
+    {
+        String sendout = "";
+        for(String s: phonenumbers)
+        {
+            sendout = sendout + s + ",";
+        }
+        sendout = sendout.substring(0, sendout.length() - 1);
+        Intent sendIntent = new Intent(Intent.ACTION_SEND);
+        sendIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        sendIntent.putExtra("sms_body", "Sent from Instashare.");
+        sendIntent.putExtra("address", sendout);
+        sendIntent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(getApplicationContext(), BuildConfig.APPLICATION_ID + ".provider", new File(imagepath)));
+        sendIntent.setType("image/jpeg");
+        startActivity(sendIntent);
     }
 }
