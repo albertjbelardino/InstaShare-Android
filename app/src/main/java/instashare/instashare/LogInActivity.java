@@ -49,7 +49,7 @@ public class LogInActivity extends AppCompatActivity {
                        startActivity(i);
                        finish();
                    } else {
-                       Looper.prepare();
+                       //Looper.prepare();
                        Toast.makeText(a, "INCORRECT LOGIN INFO", Toast.LENGTH_SHORT).show();
                    }
                }
