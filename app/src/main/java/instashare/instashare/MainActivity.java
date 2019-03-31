@@ -93,10 +93,9 @@ public class MainActivity extends AppCompatActivity {
                     //imageView.setImageBitmap(BitmapFactory.decodeFile(imgDecodableString));
 
                     //make intent for pic taken activity
-                    Intent intent = new Intent(this, PictureTakenActivity.class);
-                    intent.putExtra("myimage", imgDecodableString);
+                    Intent intent = new Intent(this, GalleryResultActivity.class);
+                    intent.putExtra("galleryImagePath", imgDecodableString);
                     startActivity(intent);
-
 
                     break;
 

@@ -58,6 +58,31 @@ public class PictureTakenActivity extends AppCompatActivity {
         imagepath = getIntent().getStringExtra("myimage");
         iv = (ImageView) findViewById(R.id.myPicture);
         iv.setImageBitmap(BitmapFactory.decodeFile(imagepath));
+
+        sendimagebutton = (Button) findViewById(R.id.InstashareButton);
+        sendimagebutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final Map<String, String> data = new HashMap<String, String>();
+
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                byte[] b = baos.toByteArray();
+                try {
+                    BitmapFactory.decodeFile(getIntent().getStringExtra("myimage"))
+                            .compress(Bitmap.CompressFormat.JPEG, 100, baos); //bm is the bitmap object
+                    b = baos.toByteArray();
+                    baos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                final String sfString = Base64.encodeToString(b, Base64.DEFAULT);
+
+                data.put("base_64", sfString);
+                JSONObject jsonob = new JSONObject(data);
+                VolleyFactory.sendJsonObjRequest(jsonob, getApplicationContext(), ApiContract.sendPicture());
+            }
+        });
         //final Bitmap bm = BitmapFactory.decodeFile(imagepath);
         //popupWindow  = new PopupWindow(this);
 /*

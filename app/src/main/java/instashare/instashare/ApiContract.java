@@ -16,5 +16,5 @@ public class ApiContract {
         return baseUrl + "api/register/";
     }
 
-    public static String sendPicture(){return baseUrl + "/api/demo64/";}
+    public static String sendPicture(){return baseUrl + "api/demo64/";}
 }

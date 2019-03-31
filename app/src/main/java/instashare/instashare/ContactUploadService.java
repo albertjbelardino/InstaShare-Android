@@ -78,9 +78,11 @@ public class ContactUploadService {
         Contact[] contacts = getContactList(cr, context);
 
         for(Contact contact : contacts) {
-            if(contact.image != null) {
-                if (!uploadSingleContact(contact.name, contact.number, contact.image, appContext)) {
-                    Log.i("CONTACT_UPLOAD_ERROR", contact.name + " " + contact.number + " ");
+            if(contact != null) {
+                if (contact.image != null) {
+                    if (!uploadSingleContact(contact.name, contact.number, contact.image, appContext)) {
+                        Log.i("CONTACT_UPLOAD_ERROR", contact.name + " " + contact.number + " ");
+                    }
                 }
             }
         }
