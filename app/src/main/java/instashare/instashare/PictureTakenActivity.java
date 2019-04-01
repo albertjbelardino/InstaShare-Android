@@ -108,18 +108,31 @@ public class PictureTakenActivity extends AppCompatActivity {
                     JsonArrayRequest jor = new JsonArrayRequest(Request.Method.POST, ApiContract.sendPicture(), new JSONObject(data), new Response.Listener<JSONArray>() {
                         @Override
                         public void onResponse(JSONArray response) {
-                            Log.d("response", response.toString());
-                            String[] numbers = new String[response.length()];
-                            for(int x = 0; x < response.length(); x++)
+                            if(response.length() == 0)
                             {
-                                try {
-                                    numbers[x] = response.getJSONObject(x).getString("phone_number");
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
+                                displayErrorMessage();
                             }
-                            dialog.dismiss();
-                            sendImage(numbers);
+                            else {
+                                Log.d("response", response.toString());
+                                String[] numbers = new String[response.length()];
+                                String[] names = new String[response.length()];
+                                for (int x = 0; x < response.length(); x++) {
+                                    try {
+                                        numbers[x] = response.getJSONObject(x).getString("phone_number");
+                                        names[x] = response.getJSONObject(x).getString("name");
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                                dialog.dismiss();
+                                Intent i = new Intent(getBaseContext(), ChooseSendActivity.class);
+                                i.putExtra("contact_names", names);
+                                i.putExtra("contact_numbers", numbers);
+                                i.putExtra("myimagepath", imagepath);
+                                startActivity(i);
+                                finish();
+                                //sendImage(numbers);
+                            }
 //                        TextView tv = new TextView(getApplicationContext());
 //                        try {
 //                            tv.setText("Match: " + response.getString("first_name") + " " + response.getString("last_name"));
@@ -198,20 +211,5 @@ public class PictureTakenActivity extends AppCompatActivity {
             puw.showAtLocation(iv, Gravity.CENTER, 0, 0);
     }
 
-    public void sendImage(String[] phonenumbers)
-    {
-        String sendout = "";
-        for(String s: phonenumbers)
-        {
-            sendout = sendout + s + ",";
-        }
-        sendout = sendout.substring(0, sendout.length() - 1);
-        Intent sendIntent = new Intent(Intent.ACTION_SEND);
-        sendIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        sendIntent.putExtra("sms_body", "Sent from Instashare.");
-        sendIntent.putExtra("address", sendout);
-        sendIntent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(getApplicationContext(), BuildConfig.APPLICATION_ID + ".provider", new File(imagepath)));
-        sendIntent.setType("image/jpeg");
-        startActivity(sendIntent);
-    }
+
 }
