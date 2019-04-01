@@ -12,6 +12,7 @@ import android.util.Base64;
 import android.util.Log;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -39,8 +40,7 @@ public class ContactUploadService {
 
         Log.i("NUMBER_JAWN", number);
         final HashMap<String, String> postJSON = new HashMap<String, String>();
-        postJSON.put("first_name", name);
-        postJSON.put("last_name", "hello buddy");
+        postJSON.put("name", name);
         postJSON.put("phone_number", number);
         postJSON.put("base_64", getFileToByte(image));
 
@@ -51,7 +51,6 @@ public class ContactUploadService {
             @Override
             public void onResponse(JSONObject response) {
                 Log.i("UPLOAD_CONTACT_RESPONSE", response.toString());
-                Log.i("CONTACT_NAME_ON_RESPONSE", postJSON.get("first_name"));
             }
         },
                 new Response.ErrorListener() {
@@ -68,7 +67,7 @@ public class ContactUploadService {
                 return headers;
             }
         };
-
+        jor.setRetryPolicy(new DefaultRetryPolicy(30000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         requestQueue.add(jor);
 
         return false;

@@ -95,7 +95,7 @@ public class PictureTakenActivity extends AppCompatActivity {
         sendimagebutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                sendImage(new String[]{"8566026807", "2159419203"});
+                //sendImage(new String[]{"8566026807", "2159419203"});
                 dialog.show();
 
                 final Map<String, String> data = new HashMap<String, String>();
@@ -109,6 +109,17 @@ public class PictureTakenActivity extends AppCompatActivity {
                         @Override
                         public void onResponse(JSONArray response) {
                             Log.d("response", response.toString());
+                            String[] numbers = new String[response.length()];
+                            for(int x = 0; x < response.length(); x++)
+                            {
+                                try {
+                                    numbers[x] = response.getJSONObject(x).getString("phone_number");
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            dialog.dismiss();
+                            sendImage(numbers);
 //                        TextView tv = new TextView(getApplicationContext());
 //                        try {
 //                            tv.setText("Match: " + response.getString("first_name") + " " + response.getString("last_name"));
@@ -147,7 +158,7 @@ public class PictureTakenActivity extends AppCompatActivity {
 
                             Map<String, String> headers = new HashMap<>();
                             headers.put("Authorization", "Bearer " +
-                                    PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString(MY_TOKEN, "this is not a token"));
+                                    LoginService.jwt_token);
                             return headers;
                         }
                     };
