@@ -74,10 +74,9 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="start"
-            app:headerLayout="nav_header"
+            app:headerLayout="@layout/nav_header"
             android:id="@+id/nav_view"
-            app:menu="@menu/navbar">
-        </android.support.design.widget.NavigationView>
+            app:menu="@menu/navbar"/>
     </android.support.v4.widget.DrawerLayout>
 
 </android.support.constraint.ConstraintLayout>
