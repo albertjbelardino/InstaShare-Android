@@ -75,7 +75,7 @@ public class PictureTakenActivity extends AppCompatActivity {
         iv.setImageBitmap(bm);
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bm.compress(Bitmap.CompressFormat.JPEG, 100, baos); //bm is the bitmap object
+        bm.compress(Bitmap.CompressFormat.JPEG, 30, baos); //bm is the bitmap object
         byte[] b = baos.toByteArray();
         try {
             baos.close();

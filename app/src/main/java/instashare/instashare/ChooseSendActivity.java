@@ -61,7 +61,8 @@ public class ChooseSendActivity extends AppCompatActivity {
                 phonetosend.add(numbers[y]);
             }
         }
-        sendImage((String[])phonetosend.toArray());
+        sendImage(phonetosend.toArray(new String[0]));
+        finish();
 
     }
 
