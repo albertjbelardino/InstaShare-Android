@@ -26,7 +26,7 @@ import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
 
-    Button takepicbutton, galleryButton;
+    Button takepicbutton, galleryButton,singleUploadButton;
     SurfaceView sv;
     CameraHandler ch;
     final String LOGGED_IN = "alkdhksadfadfsdfhst";
@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
         getPermissions();
         setUpPictureTaking();
         initGalleryButton();
+        initSingleContactButton();
         Log.d("are logged?", Boolean.toString(PreferenceManager.getDefaultSharedPreferences(this).getBoolean(LOGGED_IN, false)));
 
         if(!PreferenceManager.getDefaultSharedPreferences(this).getBoolean(LOGGED_IN, false)) {
@@ -47,6 +48,17 @@ public class MainActivity extends AppCompatActivity {
         }
 
         //ContactUploadService.uploadAllContacts(getContentResolver(), this, getApplicationContext());
+    }
+
+    private void initSingleContactButton() {
+        singleUploadButton = (Button) findViewById(R.id.single_upload_button);
+        singleUploadButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, SingleContactUploadActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private void initGalleryButton() {
@@ -112,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
 
             sv.setVisibility(SurfaceView.VISIBLE);
             sv.draw(new Canvas());
-            ch = new CameraHandler(sv, (Activity)this);
+            ch = new CameraHandler(sv, (Activity)this, 1);
             takepicbutton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

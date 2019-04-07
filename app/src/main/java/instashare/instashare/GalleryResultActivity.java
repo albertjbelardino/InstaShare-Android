@@ -71,7 +71,6 @@ public class GalleryResultActivity extends AppCompatActivity {
                 data.put("base_64", sfString);
                 JSONObject jsonob = new JSONObject(data);
                 VolleyFactory.sendJsonObjRequest(jsonob, getApplicationContext(), ApiContract.sendPicture());
-                //sendVolleyRequest(jsonob);
             }
         });
     }

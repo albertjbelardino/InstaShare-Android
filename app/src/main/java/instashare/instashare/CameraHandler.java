@@ -60,14 +60,16 @@ public class CameraHandler {
     Boolean takePicture = false;
     ImageReader ir;
     Surface irsurface;
+    final int pic_flag;
 
 
 
 
 
-    public CameraHandler(SurfaceView sv, Activity a) throws CameraAccessException {
+    public CameraHandler(SurfaceView sv, Activity a, int flag) throws CameraAccessException {
         this.a = a;
         this.sv = sv;
+        this.pic_flag = flag;
 
         final Activity getActivity = a;
         cm = (CameraManager) a.getSystemService(Context.CAMERA_SERVICE);
@@ -118,8 +120,12 @@ public class CameraHandler {
                     mybitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
                     fos.flush();
                     fos.close();
-                    showImage(finalfile);
+                    if(pic_flag == 1) {
+                        showImage(finalfile);
+                    }
+                    else if(pic_flag == 2) {
 
+                    }
                 }catch (Exception e){
                     e.printStackTrace();
 
@@ -219,7 +225,7 @@ public class CameraHandler {
         cd.close();
         sv.getHolder().getSurface().release();
         ir.close();
-
+        ir.close();
     }
 
 
@@ -229,6 +235,9 @@ public class CameraHandler {
         cr.addTarget(irsurface);
 
         Log.d("TAG", Integer.toString(((WindowManager) a.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getOrientation()));
+        Log.d("ccsession", ccsession.toString());
+        Log.d("crbuild", cr.build().toString());
+        Log.d("svhandler", sv.getHandler().toString());
         ccsession.capture(cr.build(), new CameraCaptureSession.CaptureCallback() {
             @Override
             public void onCaptureStarted(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, long timestamp, long frameNumber) {
