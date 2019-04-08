@@ -12,6 +12,7 @@ import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
 import android.util.Base64;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -66,13 +67,17 @@ public class ContactUploadService {
             public void onResponse(JSONObject response) {
                 Log.i("UPLOAD_CONTACT_RESPONSE", response.toString());
                 dialog.dismiss();
+                Toast.makeText(tempa, "CONTACT UPLOAD SUCCESSFUL", Toast.LENGTH_SHORT).show();
                 tempa.finish();
             }
         },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        dialog.dismiss();
+                        Toast.makeText(tempa, "ERROR WITH CONTACT UPLOAD; TRY AGAIN", Toast.LENGTH_SHORT).show();
                         Log.i("ERROR", error.toString() + "\n\n\n\n\n\n\n\n" + postJSON.toString());
+                        tempa.finish();
                     }
                 }) {
             @Override
