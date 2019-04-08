@@ -54,7 +54,7 @@ public class PictureTakenActivity extends AppCompatActivity {
 
     String imagepath;
     ImageView iv;
-    Button sendimagebutton;
+    Button sendimagebutton, addContactButton;
     final String MY_TOKEN = "sljdgbnrnkjsdfbgkjgnxfbnjkdgnjk";
     PopupWindow popupWindow;
     Bitmap myimage;
@@ -86,6 +86,8 @@ public class PictureTakenActivity extends AppCompatActivity {
         final String sfString = Base64.encodeToString(b, Base64.DEFAULT);
 
         sendimagebutton = findViewById(R.id.InstashareButton);
+        addContactButton = (Button) findViewById(R.id.add_contact_button);
+
         final ProgressDialog dialog = new ProgressDialog(this); // this = YourActivity
         dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         dialog.setTitle("Loading");
@@ -188,6 +190,15 @@ public class PictureTakenActivity extends AppCompatActivity {
 
 
 
+        });
+
+        addContactButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(PictureTakenActivity.this, SingleContactUploadActivity.class);
+                intent.putExtra("imagepath", imagepath);
+                startActivity(intent);
+            }
         });
     }
 

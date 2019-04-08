@@ -11,7 +11,6 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
-
     <application
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
@@ -19,7 +18,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".GalleryResultActivity"></activity>
+        <activity android:name=".SingleContactUploadActivity"></activity>
+        <activity android:name=".GalleryResultActivity" />
         <activity
             android:name=".MainActivity"
             android:launchMode="singleInstance"
@@ -71,7 +71,7 @@
                 android:resource="@xml/provider_paths" />
         </provider>
 
-        <activity android:name=".ChooseSendActivity"></activity>
+        <activity android:name=".ChooseSendActivity" />
     </application>
 
 </manifest>

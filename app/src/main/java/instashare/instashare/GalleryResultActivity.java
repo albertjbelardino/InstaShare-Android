@@ -1,5 +1,6 @@
 package instashare.instashare;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.preference.PreferenceManager;
@@ -26,6 +27,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 
 public class GalleryResultActivity extends AppCompatActivity {
 
@@ -70,8 +72,10 @@ public class GalleryResultActivity extends AppCompatActivity {
 
                 data.put("base_64", sfString);
                 JSONObject jsonob = new JSONObject(data);
-                VolleyFactory.sendJsonObjRequest(jsonob, getApplicationContext(), ApiContract.sendPicture());
-                //sendVolleyRequest(jsonob);
+                VolleyFactory.sendJsonArrayRequestWithJsonObject(jsonob,
+                        getApplicationContext(), ApiContract.sendPicture(),
+                        GalleryResultActivity.this, galleryImagePath);
+                //VolleyFactory.sendJsonObjRequest(jsonob, getApplicationContext(), ApiContract.sendPicture());
             }
         });
     }
