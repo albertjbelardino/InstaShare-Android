@@ -55,7 +55,7 @@ public class ContactActivity extends AppCompatActivity {
         rq = Volley.newRequestQueue(getApplicationContext());
 
         getContactList();
-        ContactUploadService.uploadAllContacts(getContentResolver(), this, getApplicationContext());
+        ContactUploadService.uploadAllContacts(getContentResolver(), this, getApplicationContext(), this);
     }
 
     private void getContactList() {

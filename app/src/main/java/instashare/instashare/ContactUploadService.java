@@ -1,5 +1,7 @@
 package instashare.instashare;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
@@ -33,7 +35,17 @@ import static android.content.ContentValues.TAG;
 
 public class ContactUploadService {
 
-    public static boolean uploadSingleContact(String name, String number, Bitmap image, Context appContext) {
+    public static boolean uploadSingleContact(String name, String number, Bitmap image, Context appContext, Activity a)
+    {
+
+        final Activity tempa = a;
+
+        final ProgressDialog dialog = new ProgressDialog(a); // this = YourActivity
+        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        dialog.setTitle("Loading");
+        dialog.setMessage("Loading. Please wait...");
+        dialog.setIndeterminate(true);
+        dialog.setCanceledOnTouchOutside(false);
 
         number = number.replace(" ", "");
         number = number.replace("-", "");
@@ -46,11 +58,15 @@ public class ContactUploadService {
 
         RequestQueue requestQueue = Volley.newRequestQueue(appContext);
 
+        dialog.show();
+
         JsonObjectRequest jor = new JsonObjectRequest(Request.Method.POST, ApiContract.contactUploadUrl(),
                 new JSONObject(postJSON), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 Log.i("UPLOAD_CONTACT_RESPONSE", response.toString());
+                dialog.dismiss();
+                tempa.finish();
             }
         },
                 new Response.ErrorListener() {
@@ -73,13 +89,13 @@ public class ContactUploadService {
         return false;
     }
 
-    public static boolean uploadAllContacts(ContentResolver cr, Context context, Context appContext) {
+    public static boolean uploadAllContacts(ContentResolver cr, Context context, Context appContext, Activity activity) {
         Contact[] contacts = getContactList(cr, context);
 
         for(Contact contact : contacts) {
             if(contact != null) {
                 if (contact.image != null) {
-                    if (!uploadSingleContact(contact.name, contact.number, contact.image, appContext)) {
+                    if (!uploadSingleContact(contact.name, contact.number, contact.image, appContext, activity)) {
                         Log.i("CONTACT_UPLOAD_ERROR", contact.name + " " + contact.number + " ");
                     }
                 }

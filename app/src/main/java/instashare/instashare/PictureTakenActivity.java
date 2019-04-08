@@ -112,6 +112,7 @@ public class PictureTakenActivity extends AppCompatActivity {
                             if(response.length() == 0)
                             {
                                 displayErrorMessage();
+                                dialog.dismiss();
                             }
                             else {
                                 Log.d("response", response.toString());
