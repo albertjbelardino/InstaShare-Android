@@ -75,7 +75,7 @@ public class PictureTakenActivity extends AppCompatActivity {
         iv.setImageBitmap(bm);
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bm.compress(Bitmap.CompressFormat.JPEG, 30, baos); //bm is the bitmap object
+        bm.compress(Bitmap.CompressFormat.JPEG, 15, baos); //bm is the bitmap object
         byte[] b = baos.toByteArray();
         try {
             baos.close();
@@ -103,7 +103,6 @@ public class PictureTakenActivity extends AppCompatActivity {
                 final Map<String, String> data = new HashMap<String, String>();
                 data.put("base_64", sfString);
                 Log.d("INFO", data.toString());
-                Log.d("MY TOKEN", PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString(MY_TOKEN, "this is not a token"));
                 JSONObject jsonob = new JSONObject(data);
 
                 RequestQueue rq = Volley.newRequestQueue(getApplicationContext());

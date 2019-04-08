@@ -39,7 +39,6 @@ public class MainActivity extends AppCompatActivity {
         getPermissions();
         setUpPictureTaking();
         initGalleryButton();
-        initSingleContactButton();
         Log.d("are logged?", Boolean.toString(PreferenceManager.getDefaultSharedPreferences(this).getBoolean(LOGGED_IN, false)));
 
         if(!PreferenceManager.getDefaultSharedPreferences(this).getBoolean(LOGGED_IN, false)) {
@@ -50,16 +49,6 @@ public class MainActivity extends AppCompatActivity {
         //ContactUploadService.uploadAllContacts(getContentResolver(), this, getApplicationContext());
     }
 
-    private void initSingleContactButton() {
-        singleUploadButton = (Button) findViewById(R.id.single_upload_button);
-        singleUploadButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, SingleContactUploadActivity.class);
-                startActivity(intent);
-            }
-        });
-    }
 
     private void initGalleryButton() {
         galleryButton = (Button) findViewById(R.id.gallery_button);
