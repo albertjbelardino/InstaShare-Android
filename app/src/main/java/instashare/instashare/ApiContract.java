@@ -2,7 +2,7 @@ package instashare.instashare;
 
 public class ApiContract {
 
-    public static final String baseUrl = "http://10.108.93.47:8000/";
+    public static final String baseUrl = "http://django-env.mzkdgeh5tz.us-east-1.elasticbeanstalk.com:80/";
 
     public static String loginUrl() {
         return baseUrl + "api/token/";
