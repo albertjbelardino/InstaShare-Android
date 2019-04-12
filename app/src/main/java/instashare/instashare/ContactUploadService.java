@@ -36,17 +36,13 @@ import static android.content.ContentValues.TAG;
 
 public class ContactUploadService {
 
-    public static boolean uploadSingleContact(String name, String number, Bitmap image, Context appContext, Activity a)
+    public static boolean uploadSingleContact(String name, String number, Bitmap image, Context appContext, Activity a, final boolean sendingMulitple)
     {
 
         final Activity tempa = a;
 
-        final ProgressDialog dialog = new ProgressDialog(a); // this = YourActivity
-        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        dialog.setTitle("Loading");
-        dialog.setMessage("Loading. Please wait...");
-        dialog.setIndeterminate(true);
-        dialog.setCanceledOnTouchOutside(false);
+        final ProgressDialog dialog = setUpDialog(a); // this = YourActivity
+
 
         number = number.replace(" ", "");
         number = number.replace("-", "");
@@ -58,26 +54,32 @@ public class ContactUploadService {
         postJSON.put("base_64", getFileToByte(image));
 
         RequestQueue requestQueue = Volley.newRequestQueue(appContext);
-
-        dialog.show();
+        if(!sendingMulitple) {
+            dialog.show();
+        }
 
         JsonObjectRequest jor = new JsonObjectRequest(Request.Method.POST, ApiContract.contactUploadUrl(),
                 new JSONObject(postJSON), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 Log.i("UPLOAD_CONTACT_RESPONSE", response.toString());
-                dialog.dismiss();
-                Toast.makeText(tempa, "CONTACT UPLOAD SUCCESSFUL", Toast.LENGTH_SHORT).show();
-                tempa.finish();
+                if(!sendingMulitple) {
+                    dialog.dismiss();
+                    Toast.makeText(tempa, "CONTACT UPLOAD SUCCESSFUL", Toast.LENGTH_SHORT).show();
+                    tempa.finish();
+
+                }
             }
         },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        dialog.dismiss();
-                        Toast.makeText(tempa, "ERROR WITH CONTACT UPLOAD; TRY AGAIN", Toast.LENGTH_SHORT).show();
-                        Log.i("ERROR", error.toString() + "\n\n\n\n\n\n\n\n" + postJSON.toString());
-                        tempa.finish();
+                        if(!sendingMulitple) {
+                            dialog.dismiss();
+                            Toast.makeText(tempa, "ERROR WITH CONTACT UPLOAD; TRY AGAIN", Toast.LENGTH_SHORT).show();
+                            Log.i("ERROR", error.toString() + "\n\n\n\n\n\n\n\n" + postJSON.toString());
+                            tempa.finish();
+                        }
                     }
                 }) {
             @Override
@@ -96,16 +98,16 @@ public class ContactUploadService {
 
     public static boolean uploadAllContacts(ContentResolver cr, Context context, Context appContext, Activity activity) {
         Contact[] contacts = getContactList(cr, context);
-
         for(Contact contact : contacts) {
             if(contact != null) {
                 if (contact.image != null) {
-                    if (!uploadSingleContact(contact.name, contact.number, contact.image, appContext, activity)) {
-                        Log.i("CONTACT_UPLOAD_ERROR", contact.name + " " + contact.number + " ");
+                    if (!uploadSingleContact(contact.name, contact.number, contact.image, appContext, activity, true)) {
+                        //this happens every time a contact is uploaded regardless of if it fails or succeeds
                     }
                 }
             }
         }
+        Toast.makeText(activity, "CONTACT UPLOAD SUCCESSFUL", Toast.LENGTH_SHORT).show();
 
         return true;
     }
@@ -184,5 +186,16 @@ public class ContactUploadService {
         }
         Log.i("upload_pic_string", encodeString);
         return encodeString;
+    }
+
+    public static ProgressDialog setUpDialog(Activity activity)
+    {
+        ProgressDialog dialog = new ProgressDialog(activity);
+        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        dialog.setTitle("Loading");
+        dialog.setMessage("Loading. Please wait...");
+        dialog.setIndeterminate(true);
+        dialog.setCanceledOnTouchOutside(false);
+        return dialog;
     }
 }

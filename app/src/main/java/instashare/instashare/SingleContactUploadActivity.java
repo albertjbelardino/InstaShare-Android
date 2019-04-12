@@ -45,7 +45,7 @@ public class SingleContactUploadActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String name = ((EditText) findViewById(R.id.nameEditText)).getText().toString();
                 String number = ((EditText) findViewById(R.id.numberEditText)).getText().toString();
-                ContactUploadService.uploadSingleContact(name, number, BitmapFactory.decodeFile(contactImagePath), getApplicationContext(), thisactivity);
+                ContactUploadService.uploadSingleContact(name, number, BitmapFactory.decodeFile(contactImagePath), getApplicationContext(), thisactivity, true);
             }
         });
     }

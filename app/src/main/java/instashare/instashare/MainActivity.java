@@ -157,8 +157,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void openContactList(View v)
     {
-        Intent intent = new Intent(this, ContactActivity.class);
-        startActivity(intent);
+        //Intent intent = new Intent(this, ContactActivity.class);
+        //startActivity(intent);
+        ContactUploadService.uploadAllContacts(getContentResolver(), this, getApplicationContext(), this);
     }
 
     public void openSettingsPage(View v)
