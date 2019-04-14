@@ -2,6 +2,7 @@ package instashare.instashare;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -22,7 +23,9 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -63,43 +66,45 @@ public class MainActivity extends AppCompatActivity {
 
     private void pickFromGallery(){
         //Create an Intent with action as ACTION_PICK
-        Intent intent=new Intent(Intent.ACTION_PICK);
+        Intent intent=new Intent();
         // Sets the type as image/*. This ensures only components of type image are selected
         intent.setType("image/*");
-        //We pass an extra array with the accepted mime types. This will ensure only components with these MIME types as targeted.
-        String[] mimeTypes = {"image/jpeg", "image/png"};
-        intent.putExtra(Intent.EXTRA_MIME_TYPES,mimeTypes);
-        // Launching the Intent
-        startActivityForResult(intent, GALLERY_REQUEST_CODE);
+
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+
+        startActivityForResult(Intent.createChooser(intent,"Select Picture"), 1);
     }
 
-    public void onActivityResult(int requestCode,int resultCode,Intent data){
+    public void onActivityResult(int requestCode,int resultCode, Intent data){
         // Result code is RESULT_OK only if the user selects an Image
         if (resultCode == Activity.RESULT_OK)
             switch (requestCode){
-                case GALLERY_REQUEST_CODE:
+                case 1:
                     //data.getData return the content URI for the selected Image
-                    Uri selectedImage = data.getData();
-                    String[] filePathColumn = { MediaStore.Images.Media.DATA };
-                    // Get the cursor
-                    Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
-                    // Move to first row
-                    cursor.moveToFirst();
-                    //Get the column index of MediaStore.Images.Media.DATA
-                    int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                    //Gets the String value in the column
-                    String imgDecodableString = cursor.getString(columnIndex);
-                    cursor.close();
-                    // Set the Image in ImageView after decoding the String
-                    //imageView.setImageBitmap(BitmapFactory.decodeFile(imgDecodableString));
+                    ClipData selectedImages = data.getClipData();
+                    ArrayList<String> galleryImagePaths = new ArrayList<String>();
+                    String[] filePathColumn = {MediaStore.Images.Media.DATA};
+                    Cursor cursor = null;
+
+                    for(int i = 0; i < selectedImages.getItemCount(); i++) {
+                        Log.i("imagePaths", selectedImages.getItemAt(i).getUri().getPath());
+                        /*
+                        cursor = getContentResolver().query(selectedImages.getItemAt(i).getUri(),
+                                filePathColumn, null, null, null);
+                        cursor.moveToFirst();
+                        int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                        String imagePath = cursor.getString(columnIndex);
+                        Log.i("imagePath", imagePath);*/
+                    }
 
                     //make intent for pic taken activity
-                    Intent intent = new Intent(this, GalleryResultActivity.class);
-                    intent.putExtra("galleryImagePath", imgDecodableString);
+                    Intent intent = new Intent(this, BatchGalleryActivity.class);
+
+                    intent.putStringArrayListExtra("galleryImagePaths", galleryImagePaths);
                     startActivity(intent);
 
                     break;
-
             }
     }
 
