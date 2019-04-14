@@ -6,15 +6,15 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_analyze"
-
+            android:icon="@drawable/ic_photo_library_black_24dp"
             android:title="Analyze Photo" />
         <item
             android:id="@+id/nav_contacts"
-
+            android:icon="@drawable/ic_import_contacts_black_24dp"
             android:title="Update Contacts" />
         <item
             android:id="@+id/nav_logout"
-
+            android:icon="@drawable/ic_exit_to_app_black_24dp"
             android:title="Logout" />
 
     </group>
