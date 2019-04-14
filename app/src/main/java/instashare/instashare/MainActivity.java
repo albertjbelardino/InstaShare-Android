@@ -17,7 +17,10 @@ import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -40,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     final String LOGGED_IN = "alkdhksadfadfsdfhst";
     final int GALLERY_REQUEST_CODE = 112;
     private DrawerLayout drawer;
+    ActionBarDrawerToggle actionBarDrawerToggle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,15 +60,36 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp);
+
 
         drawer = findViewById(R.id.drawer_layout);
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        actionBarDrawerToggle = new ActionBarDrawerToggle(this,drawer,R.string.drawer_open,R.string.drawer_close);
+        drawer.addDrawerListener(actionBarDrawerToggle);
+
+
 
         //ContactUploadService.uploadAllContacts(getContentResolver(), this, getApplicationContext());
     }
-
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        actionBarDrawerToggle.syncState();
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        switch(item.getItemId()){
+            case android.R.id.home:
+                drawer.openDrawer(GravityCompat.START);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     private void initGalleryButton() {
         galleryButton = (Button) findViewById(R.id.gallery_button);
