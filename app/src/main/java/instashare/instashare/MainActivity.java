@@ -14,11 +14,16 @@ import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
@@ -27,13 +32,14 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
     Button takepicbutton, galleryButton,singleUploadButton;
     SurfaceView sv;
     CameraHandler ch;
     final String LOGGED_IN = "alkdhksadfadfsdfhst";
     final int GALLERY_REQUEST_CODE = 112;
+    private DrawerLayout drawer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +54,13 @@ public class MainActivity extends AppCompatActivity {
             Intent i = new Intent(this, LogInActivity.class);
             startActivity(i);
         }
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        drawer = findViewById(R.id.drawer_layout);
+
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
 
         //ContactUploadService.uploadAllContacts(getContentResolver(), this, getApplicationContext());
     }
@@ -169,9 +182,28 @@ public class MainActivity extends AppCompatActivity {
         ch.endCapture();
 
     }
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        switch(item.getItemId()){
+            case R.id.nav_analyze:
+                pickFromGallery();
+                break;
+            case R.id.nav_contacts:
+                ContactUploadService.uploadAllContacts(getContentResolver(), this, getApplicationContext(), this);
+                break;
+            case R.id.nav_logout:
+                PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(LOGGED_IN, false).commit();
+                System.exit(0);
+                break;
+        }
+
+        return true;
+    }
 
     @Override
     protected void onPause() {
         super.onPause();
     }
+
+
 }
