@@ -64,6 +64,11 @@ public class SignUpActivity extends AppCompatActivity {
                 boolean test5 = textPhone.getText().toString().trim().length()==0;
                 boolean test6 = (textFirst.getText().toString().trim().length()==0||textLast.getText().toString().trim().length()==0);
                 boolean test7 = (!textPassword.getText().toString().equals(textPasswordConfirm.getText().toString()));
+                boolean test8 = !textEmailAddress.getText().toString().contains("@")
+                        || !textEmailAddress.getText().toString().contains(".");
+                boolean test9 = !(textPassword.getText().toString().length() > 5);
+                boolean test10 = !textPassword.getText().toString().matches(".*\\d.*");
+                boolean test11 = !(textPhone.getText().toString().length() == 10);
 
                 if (test1||test2||test3||test4||test5||test6){
                     Toast.makeText(SignUpActivity.this, "All elements must be filled.", Toast.LENGTH_SHORT).show();
@@ -71,8 +76,24 @@ public class SignUpActivity extends AppCompatActivity {
                 else if(test7){
                     Toast.makeText(SignUpActivity.this, "Password and password confirmation must match.", Toast.LENGTH_SHORT).show();
                 }
+                else if(test8)
+                {
+                    Toast.makeText(SignUpActivity.this, "Email not formatted correctly.", Toast.LENGTH_SHORT).show();
+                }
+                else if(test9)
+                {
+                    Toast.makeText(SignUpActivity.this, "Password must be at least 6 characters long.", Toast.LENGTH_SHORT).show();
+                }
+                else if(test10)
+                {
+                    Toast.makeText(SignUpActivity.this, "Password must contain at least one number.", Toast.LENGTH_SHORT).show();
+                }
+                else if(test11)
+                {
+                    Toast.makeText(SignUpActivity.this, "Phone number length is incorrect", Toast.LENGTH_SHORT).show();
+                }
                 else{
-                    Toast.makeText(SignUpActivity.this, "Hello "+textUsername.getText().toString(), Toast.LENGTH_SHORT).show();
+
 
                     RequestQueue rq = Volley.newRequestQueue(getApplicationContext());
 
@@ -96,9 +117,10 @@ public class SignUpActivity extends AppCompatActivity {
                             Log.d("response", response.toString());
                             try {
                                 response.getString("id");
+                                Toast.makeText(getApplicationContext(), "Sign up successful!", Toast.LENGTH_SHORT).show();
                                 finish();
                             } catch (JSONException e) {
-                                Toast.makeText(getApplicationContext(), "BAD SIGNUP", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), "SIGN UP FAILED", Toast.LENGTH_SHORT).show();
                             }
 
                         }

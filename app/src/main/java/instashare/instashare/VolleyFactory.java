@@ -1,5 +1,7 @@
 package instashare.instashare;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -59,12 +61,21 @@ public class VolleyFactory {
 
     public static void sendJsonArrayRequestWithJsonObject(JSONObject jsonob,
                                                           Context applicationContext, String apiUrl,
-                                                          final Context callingContext, final String imagepath) {
+                                                          final Context callingContext, final String imagepath, Activity a) {
+
+        final ProgressDialog dialog = new ProgressDialog(a); // this = YourActivity
+        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        dialog.setTitle("Loading");
+        dialog.setMessage("Loading. Please wait...");
+        dialog.setIndeterminate(true);
+        dialog.setCanceledOnTouchOutside(false);
 
         final JSONArray[] responseHolder = new JSONArray[1];
         final Intent[] intentHolder = new Intent[1];
         responseHolder[0] = new JSONArray();
         RequestQueue rq = Volley.newRequestQueue(applicationContext);
+        dialog.show();
+        final Activity finala = a;
         JsonArrayRequest jor = new JsonArrayRequest(Request.Method.POST, ApiContract.sendPicture(), jsonob, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
@@ -88,6 +99,8 @@ public class VolleyFactory {
                     i.putExtra("contact_names", names);
                     i.putExtra("contact_numbers", numbers);
                     i.putExtra("myimagepath", imagepath);
+                    dialog.dismiss();
+                    finala.finish();
                     callingContext.startActivity(i);
                 }
             }
@@ -95,6 +108,7 @@ public class VolleyFactory {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                dialog.dismiss();
                 Log.i("Error", error.toString());
             }
         }) {
