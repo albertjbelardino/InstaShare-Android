@@ -1,5 +1,6 @@
 package instashare.instashare;
 
+import android.content.ClipData;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -18,10 +19,8 @@ public class BatchGalleryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_batch_gallery);
 
-        ArrayList<String> imagePaths = getIntent().getStringArrayListExtra("galleryImagePaths");
+        ArrayList<ClipData> imagePaths = getIntent().getParcelableArrayListExtra("galleryImagePaths");
 
-        for(String s: imagePaths)
-            Log.i("list_image", s);
         galleryCardAdapter = new GalleryCardAdapter(this, imagePaths);
         galleryViewPager = (ViewPager) findViewById(R.id.batchGalleryViewPager);
         galleryViewPager.setAdapter(galleryCardAdapter);

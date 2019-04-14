@@ -81,27 +81,13 @@ public class MainActivity extends AppCompatActivity {
         if (resultCode == Activity.RESULT_OK)
             switch (requestCode){
                 case 1:
-                    //data.getData return the content URI for the selected Image
                     ClipData selectedImages = data.getClipData();
-                    ArrayList<String> galleryImagePaths = new ArrayList<String>();
-                    String[] filePathColumn = {MediaStore.Images.Media.DATA};
-                    Cursor cursor = null;
-
-                    for(int i = 0; i < selectedImages.getItemCount(); i++) {
-                        Log.i("imagePaths", selectedImages.getItemAt(i).getUri().getPath());
-                        /*
-                        cursor = getContentResolver().query(selectedImages.getItemAt(i).getUri(),
-                                filePathColumn, null, null, null);
-                        cursor.moveToFirst();
-                        int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                        String imagePath = cursor.getString(columnIndex);
-                        Log.i("imagePath", imagePath);*/
-                    }
+                    ArrayList<ClipData> galleryImagePaths = new ArrayList<ClipData>();
+                    galleryImagePaths.add(selectedImages);
 
                     //make intent for pic taken activity
                     Intent intent = new Intent(this, BatchGalleryActivity.class);
-
-                    intent.putStringArrayListExtra("galleryImagePaths", galleryImagePaths);
+                    intent.putParcelableArrayListExtra("galleryImagePaths", galleryImagePaths);
                     startActivity(intent);
 
                     break;
