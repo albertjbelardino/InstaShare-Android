@@ -17,4 +17,6 @@ public class ApiContract {
     }
 
     public static String sendPicture(){return baseUrl + "api/singlephotoMobile/";}
+
+    public static String batchUpload(){return baseUrl + "api/batchuploadMobile/";}
 }
