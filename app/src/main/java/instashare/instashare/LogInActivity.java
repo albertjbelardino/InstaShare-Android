@@ -19,6 +19,9 @@ import java.util.concurrent.CountDownLatch;
 
 public class LogInActivity extends AppCompatActivity {
 
+    final String LOGGED_IN = "alkdhksadfadfsdfhst";
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,6 +48,7 @@ public class LogInActivity extends AppCompatActivity {
                    }
 
                    if (!LoginService.jwt_token.equals("")) {
+                       //PreferenceManager.getDefaultSharedPreferences(a).edit().putBoolean(LOGGED_IN, true).commit();
                        Intent i = new Intent(a, MainActivity.class);
                        startActivity(i);
                        finish();

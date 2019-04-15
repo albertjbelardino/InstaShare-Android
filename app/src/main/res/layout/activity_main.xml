@@ -53,7 +53,7 @@
         android:text="LOG OUT"
         app:layout_constraintEnd_toEndOf="parent"
         android:background="@android:color/transparent"
-        android:textColor="@color/colorPrimary"
+        android:textColor="@color/instaorange"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button

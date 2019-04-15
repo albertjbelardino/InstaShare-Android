@@ -44,6 +44,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     final int GALLERY_REQUEST_CODE = 112;
     private DrawerLayout drawer;
     ActionBarDrawerToggle actionBarDrawerToggle;
+    boolean paused = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -197,6 +199,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //        startActivity(intent);
         //not opening settings page now
         PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(LOGGED_IN, false).commit();
+        //ch.endCapture();
         System.exit(0);
 
     }
@@ -228,6 +231,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onPause() {
         super.onPause();
+
+            if(ch.captureSetUp) {
+                paused = true;
+                try {
+                    ch.pauseCapture();
+                } catch (CameraAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+    }
+
+    @Override
+    protected void onResume() {
+            if(ch.captureSetUp && paused == true) {
+
+                paused = false;
+            }
+        super.onResume();
     }
 
 
