@@ -9,12 +9,12 @@ public class ApiContract {
     }
 
     public static String contactUploadUrl() {
-        return baseUrl + "api/uploadContact64/";
+        return baseUrl + "api/uploadContactMobile/";
     }
 
     public static String registerUrl() {
         return baseUrl + "api/register/";
     }
 
-    public static String sendPicture(){return baseUrl + "api/demo64/";}
+    public static String sendPicture(){return baseUrl + "api/singlephotoMobile/";}
 }
