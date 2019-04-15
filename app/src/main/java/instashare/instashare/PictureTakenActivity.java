@@ -54,7 +54,7 @@ public class PictureTakenActivity extends AppCompatActivity {
 
     String imagepath;
     ImageView iv;
-    Button sendimagebutton;
+    Button sendimagebutton, addContactButton;
     final String MY_TOKEN = "sljdgbnrnkjsdfbgkjgnxfbnjkdgnjk";
     PopupWindow popupWindow;
     Bitmap myimage;
@@ -75,7 +75,7 @@ public class PictureTakenActivity extends AppCompatActivity {
         iv.setImageBitmap(bm);
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bm.compress(Bitmap.CompressFormat.JPEG, 30, baos); //bm is the bitmap object
+        bm.compress(Bitmap.CompressFormat.JPEG, 15, baos); //bm is the bitmap object
         byte[] b = baos.toByteArray();
         try {
             baos.close();
@@ -86,6 +86,8 @@ public class PictureTakenActivity extends AppCompatActivity {
         final String sfString = Base64.encodeToString(b, Base64.DEFAULT);
 
         sendimagebutton = findViewById(R.id.InstashareButton);
+        addContactButton = (Button) findViewById(R.id.add_contact_button);
+
         final ProgressDialog dialog = new ProgressDialog(this); // this = YourActivity
         dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         dialog.setTitle("Loading");
@@ -101,7 +103,6 @@ public class PictureTakenActivity extends AppCompatActivity {
                 final Map<String, String> data = new HashMap<String, String>();
                 data.put("base_64", sfString);
                 Log.d("INFO", data.toString());
-                Log.d("MY TOKEN", PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString(MY_TOKEN, "this is not a token"));
                 JSONObject jsonob = new JSONObject(data);
 
                 RequestQueue rq = Volley.newRequestQueue(getApplicationContext());
@@ -111,6 +112,7 @@ public class PictureTakenActivity extends AppCompatActivity {
                             if(response.length() == 0)
                             {
                                 displayErrorMessage();
+                                dialog.dismiss();
                             }
                             else {
                                 Log.d("response", response.toString());
@@ -188,6 +190,15 @@ public class PictureTakenActivity extends AppCompatActivity {
 
 
 
+        });
+
+        addContactButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(PictureTakenActivity.this, SingleContactUploadActivity.class);
+                intent.putExtra("imagepath", imagepath);
+                startActivity(intent);
+            }
         });
     }
 

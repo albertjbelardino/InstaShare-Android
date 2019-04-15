@@ -2,6 +2,7 @@ package instashare.instashare;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -22,15 +23,18 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    Button takepicbutton, galleryButton;
+    Button takepicbutton, galleryButton,singleUploadButton;
     SurfaceView sv;
     CameraHandler ch;
     final String LOGGED_IN = "alkdhksadfadfsdfhst";
     final int GALLERY_REQUEST_CODE = 112;
+    boolean paused = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
         //ContactUploadService.uploadAllContacts(getContentResolver(), this, getApplicationContext());
     }
 
+
     private void initGalleryButton() {
         galleryButton = (Button) findViewById(R.id.gallery_button);
 
@@ -62,43 +67,31 @@ public class MainActivity extends AppCompatActivity {
 
     private void pickFromGallery(){
         //Create an Intent with action as ACTION_PICK
-        Intent intent=new Intent(Intent.ACTION_PICK);
+        Intent intent=new Intent();
         // Sets the type as image/*. This ensures only components of type image are selected
         intent.setType("image/*");
-        //We pass an extra array with the accepted mime types. This will ensure only components with these MIME types as targeted.
-        String[] mimeTypes = {"image/jpeg", "image/png"};
-        intent.putExtra(Intent.EXTRA_MIME_TYPES,mimeTypes);
-        // Launching the Intent
-        startActivityForResult(intent, GALLERY_REQUEST_CODE);
+
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+
+        startActivityForResult(Intent.createChooser(intent,"Select Picture"), 1);
     }
 
-    public void onActivityResult(int requestCode,int resultCode,Intent data){
+    public void onActivityResult(int requestCode,int resultCode, Intent data){
         // Result code is RESULT_OK only if the user selects an Image
         if (resultCode == Activity.RESULT_OK)
             switch (requestCode){
-                case GALLERY_REQUEST_CODE:
-                    //data.getData return the content URI for the selected Image
-                    Uri selectedImage = data.getData();
-                    String[] filePathColumn = { MediaStore.Images.Media.DATA };
-                    // Get the cursor
-                    Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
-                    // Move to first row
-                    cursor.moveToFirst();
-                    //Get the column index of MediaStore.Images.Media.DATA
-                    int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                    //Gets the String value in the column
-                    String imgDecodableString = cursor.getString(columnIndex);
-                    cursor.close();
-                    // Set the Image in ImageView after decoding the String
-                    //imageView.setImageBitmap(BitmapFactory.decodeFile(imgDecodableString));
+                case 1:
+                    ClipData selectedImages = data.getClipData();
+                    ArrayList<ClipData> galleryImagePaths = new ArrayList<ClipData>();
+                    galleryImagePaths.add(selectedImages);
 
                     //make intent for pic taken activity
-                    Intent intent = new Intent(this, GalleryResultActivity.class);
-                    intent.putExtra("galleryImagePath", imgDecodableString);
+                    Intent intent = new Intent(this, BatchGalleryActivity.class);
+                    intent.putParcelableArrayListExtra("galleryImagePaths", galleryImagePaths);
                     startActivity(intent);
 
                     break;
-
             }
     }
 
@@ -112,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
 
             sv.setVisibility(SurfaceView.VISIBLE);
             sv.draw(new Canvas());
-            ch = new CameraHandler(sv, (Activity)this);
+            ch = new CameraHandler(sv, (Activity)this, 1);
             takepicbutton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -156,8 +149,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void openContactList(View v)
     {
-        Intent intent = new Intent(this, ContactActivity.class);
-        startActivity(intent);
+        //Intent intent = new Intent(this, ContactActivity.class);
+        //startActivity(intent);
+        ContactUploadService.uploadAllContacts(getContentResolver(), this, getApplicationContext(), this);
     }
 
     public void openSettingsPage(View v)
@@ -166,6 +160,7 @@ public class MainActivity extends AppCompatActivity {
 //        startActivity(intent);
         //not opening settings page now
         PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(LOGGED_IN, false).commit();
+        //ch.endCapture();
         System.exit(0);
 
     }
@@ -180,5 +175,23 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+
+            if(ch.captureSetUp) {
+                paused = true;
+                try {
+                    ch.pauseCapture();
+                } catch (CameraAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+    }
+
+    @Override
+    protected void onResume() {
+            if(ch.captureSetUp && paused == true) {
+
+                paused = false;
+            }
+        super.onResume();
     }
 }

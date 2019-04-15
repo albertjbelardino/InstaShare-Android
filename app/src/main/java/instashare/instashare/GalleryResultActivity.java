@@ -1,5 +1,8 @@
 package instashare.instashare;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.preference.PreferenceManager;
@@ -26,11 +29,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 
 public class GalleryResultActivity extends AppCompatActivity {
 
     String galleryImagePath;
     Button sendImageButton;
+    Activity a = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,13 +75,18 @@ public class GalleryResultActivity extends AppCompatActivity {
 
                 data.put("base_64", sfString);
                 JSONObject jsonob = new JSONObject(data);
-                VolleyFactory.sendJsonObjRequest(jsonob, getApplicationContext(), ApiContract.sendPicture());
-                //sendVolleyRequest(jsonob);
+                VolleyFactory.sendJsonArrayRequestWithJsonObject(jsonob,
+                        getApplicationContext(), ApiContract.sendPicture(),
+                        GalleryResultActivity.this, galleryImagePath, a);
+                //VolleyFactory.sendJsonObjRequest(jsonob, getApplicationContext(), ApiContract.sendPicture());
             }
         });
     }
 
     private void sendVolleyRequest(JSONObject jsonob) {
+
+
+
 
         RequestQueue rq = Volley.newRequestQueue(getApplicationContext());
         JsonObjectRequest jor = new JsonObjectRequest(Request.Method.POST, ApiContract.sendPicture(), jsonob, new Response.Listener<JSONObject>() {

@@ -60,14 +60,18 @@ public class CameraHandler {
     Boolean takePicture = false;
     ImageReader ir;
     Surface irsurface;
+    final int pic_flag;
+    CameraCaptureSession.CaptureCallback callback;
+    boolean captureSetUp = false;
 
 
 
 
 
-    public CameraHandler(SurfaceView sv, Activity a) throws CameraAccessException {
+    public CameraHandler(SurfaceView sv, Activity a, int flag) throws CameraAccessException {
         this.a = a;
         this.sv = sv;
+        this.pic_flag = flag;
 
         final Activity getActivity = a;
         cm = (CameraManager) a.getSystemService(Context.CAMERA_SERVICE);
@@ -118,8 +122,12 @@ public class CameraHandler {
                     mybitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
                     fos.flush();
                     fos.close();
-                    showImage(finalfile);
+                    if(pic_flag == 1) {
+                        showImage(finalfile);
+                    }
+                    else if(pic_flag == 2) {
 
+                    }
                 }catch (Exception e){
                     e.printStackTrace();
 
@@ -145,63 +153,13 @@ public class CameraHandler {
         cm.openCamera(cm.getCameraIdList()[0], new CameraDevice.StateCallback() {
             @Override
             public void onOpened(@NonNull CameraDevice cameraDevice) {
+
                 cd = cameraDevice;
-                sv.getHolder().addCallback(new SurfaceHolder.Callback() {
-                    @Override
-                    public void surfaceCreated(SurfaceHolder surfaceHolder) {
-
-                        try {
-                            cd.createCaptureSession(lsomething, new CameraCaptureSession.StateCallback() {
-                                @Override
-                                public void onConfigured(@NonNull CameraCaptureSession cameraCaptureSession) {
-                                    ccsession = cameraCaptureSession;
-                                    try {
-                                        CaptureRequest.Builder cr = cd.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
-                                        cr.addTarget(lsomething.get(0));
-                                        ccsession.setRepeatingRequest(cr.build(), new CameraCaptureSession.CaptureCallback() {
-                                            @Override
-                                            public void onCaptureStarted(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, long timestamp, long frameNumber) {
-
-                                                super.onCaptureStarted(session, request, timestamp, frameNumber);
-                                            }
-
-                                        }, sv.getHandler());
-                                    } catch (CameraAccessException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-
-                                @Override
-                                public void onConfigureFailed(@NonNull CameraCaptureSession cameraCaptureSession) {
-
-                                }
-                            }, sv.getHandler());
-                        } catch (CameraAccessException e) {
-                            e.printStackTrace();
-                        }
-
-
-                    }
-
-                    @Override
-                    public void surfaceChanged(SurfaceHolder surfaceHolder, int i, int i1, int i2) {
-
-                    }
-
-                    @Override
-                    public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
-
-                    }
-                });
-
-
-
-
+                    doeverythingbutopencamera(lsomething);
             }
 
             @Override
             public void onDisconnected(@NonNull CameraDevice cameraDevice) {
-
             }
 
             @Override
@@ -218,10 +176,28 @@ public class CameraHandler {
         ccsession.close();
         cd.close();
         sv.getHolder().getSurface().release();
+        irsurface.release();
         ir.close();
-
+        //ir.close();
     }
 
+    public void pauseCapture() throws CameraAccessException {
+        //irsurface.release();
+        //sv.getHolder().getSurface().release();
+        ccsession.stopRepeating();
+        ccsession.abortCaptures();
+        //sv.getHolder().getSurface().release();
+        //ir.close();
+
+        //cd.close();
+    }
+
+    public void resumeCapture() throws CameraAccessException {
+        //List<Surface> listofsurfaces = new ArrayList<Surface>();
+        //listofsurfaces.add(irsurface);
+        //listofsurfaces.add(sv.getHolder().getSurface());
+        //cameraSetUp(listofsurfaces);
+    }
 
     public void takePictureNow() throws CameraAccessException {
         Log.d("ORIENTATION", Integer.toString(a.getResources().getConfiguration().orientation));
@@ -229,6 +205,9 @@ public class CameraHandler {
         cr.addTarget(irsurface);
 
         Log.d("TAG", Integer.toString(((WindowManager) a.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getOrientation()));
+        Log.d("ccsession", ccsession.toString());
+        Log.d("crbuild", cr.build().toString());
+        Log.d("svhandler", sv.getHandler().toString());
         ccsession.capture(cr.build(), new CameraCaptureSession.CaptureCallback() {
             @Override
             public void onCaptureStarted(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, long timestamp, long frameNumber) {
@@ -255,6 +234,74 @@ public class CameraHandler {
         Bitmap rotatedBitmap = Bitmap.createBitmap(scaledBitmap, 0, 0, scaledBitmap.getWidth(), scaledBitmap.getHeight(), matrix, true);
 
         return rotatedBitmap;
+    }
+
+    public void doeverythingbutopencamera(List<Surface> ls)
+    {
+        final List<Surface> lsomething = ls;
+        sv.getHolder().addCallback(new SurfaceHolder.Callback() {
+            @Override
+            public void surfaceCreated(SurfaceHolder surfaceHolder) {
+
+                createCaptureSession(lsomething);
+
+            }
+
+            @Override
+            public void surfaceChanged(SurfaceHolder surfaceHolder, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
+            }
+        });
+
+    }
+
+    public void createCaptureSession(List<Surface> ls)
+    {
+        final List<Surface> lsomething = ls;
+        try {
+            cd.createCaptureSession(lsomething, new CameraCaptureSession.StateCallback() {
+                @Override
+                public void onConfigured(@NonNull CameraCaptureSession cameraCaptureSession) {
+                    ccsession = cameraCaptureSession;
+                    try {
+                        callback = new CameraCaptureSession.CaptureCallback() {
+                            @Override
+                            public void onCaptureStarted(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, long timestamp, long frameNumber) {
+                                captureSetUp = true;
+                                super.onCaptureStarted(session, request, timestamp, frameNumber);
+                            }
+
+                        };
+                        CaptureRequest.Builder cr = cd.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
+                        cr.addTarget(lsomething.get(0));
+                        ccsession.setRepeatingRequest(cr.build(), callback, sv.getHandler());
+                    } catch (CameraAccessException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onClosed(@NonNull CameraCaptureSession session) {
+
+                    super.onClosed(session);
+                }
+
+                @Override
+                public void onConfigureFailed(@NonNull CameraCaptureSession cameraCaptureSession) {
+
+                }
+            }, sv.getHandler());
+        } catch (CameraAccessException e) {
+            Intent badintent = a.getIntent();
+            a.finish();
+            a.startActivity(badintent);
+            e.printStackTrace();
+        }
+
     }
 
 
