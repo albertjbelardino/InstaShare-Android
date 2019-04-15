@@ -84,10 +84,6 @@ public class GalleryResultActivity extends AppCompatActivity {
     }
 
     private void sendVolleyRequest(JSONObject jsonob) {
-
-
-
-
         RequestQueue rq = Volley.newRequestQueue(getApplicationContext());
         JsonObjectRequest jor = new JsonObjectRequest(Request.Method.POST, ApiContract.sendPicture(), jsonob, new Response.Listener<JSONObject>() {
             @Override
