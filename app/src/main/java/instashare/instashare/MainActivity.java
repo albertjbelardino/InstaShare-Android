@@ -53,7 +53,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main);
         getPermissions();
         setUpPictureTaking();
-        initGalleryButton();
         Log.d("are logged?", Boolean.toString(PreferenceManager.getDefaultSharedPreferences(this).getBoolean(LOGGED_IN, false)));
 
         if(!PreferenceManager.getDefaultSharedPreferences(this).getBoolean(LOGGED_IN, false)) {
@@ -68,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
         drawer = findViewById(R.id.drawer_layout);
+
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -93,16 +93,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return super.onOptionsItemSelected(item);
     }
 
-    private void initGalleryButton() {
-        galleryButton = (Button) findViewById(R.id.gallery_button);
-
-        galleryButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                pickFromGallery();
-            }
-        });
-    }
+//    private void initGalleryButton() {
+//        galleryButton = (Button) findViewById(R.id.gallery_button);
+//
+//        galleryButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                pickFromGallery();
+//            }
+//        });
+//    }
 
     private void pickFromGallery(){
         //Create an Intent with action as ACTION_PICK
