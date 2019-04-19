@@ -41,7 +41,7 @@ public class ChooseSendActivity extends AppCompatActivity {
         Log.d("test", numbers.toString());
         for(int x = 0; x < names.length; x++)
         {
-                contacts[x] = new Contact(null, names[x], numbers[x]);
+                contacts[x] = new Contact(null, names[x], numbers[x], "");
         }
         Log.d("test", contacts.toString());
         cla = new ContactListAdapter(contacts, true);

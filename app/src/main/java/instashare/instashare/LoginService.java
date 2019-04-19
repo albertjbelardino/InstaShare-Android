@@ -14,6 +14,7 @@ import java.net.URL;
 
 public class LoginService {
     public static String jwt_token = "";
+    public static String my_username = "";
 
     public static void login(String username, String password) throws IOException {
 
@@ -22,7 +23,7 @@ public class LoginService {
                 + "\"password\":" + "\"" + password + "\"}";
 
         //System.out.println(postJSON);
-
+        my_username = username;
         //build request
         URL obj = new URL(ApiContract.loginUrl());
         HttpURLConnection postConnection = (HttpURLConnection) obj.openConnection();

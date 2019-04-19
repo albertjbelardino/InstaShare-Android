@@ -101,11 +101,11 @@ public class ContactActivity extends AppCompatActivity {
 
 
                     } catch (IOException e) {
-                        contacts[contactnum] = new Contact(null, name, phoneNo);
+                        //contacts[contactnum] = new Contact(null, name, phoneNo);
                         e.printStackTrace();
                     }
-                    contacts[contactnum] = new Contact(photo, name, phoneNo);
-                        Log.i(TAG, "Name: " + name);
+                    //contacts[contactnum] = new Contact(photo, name, phoneNo);
+                        //Log.i(TAG, "Name: " + name);
                         Log.i(TAG, "Phone Number: " + phoneNo);
 
 
