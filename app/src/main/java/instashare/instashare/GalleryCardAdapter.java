@@ -62,4 +62,8 @@ public class GalleryCardAdapter extends PagerAdapter {
         }
         return view;
     }
+
+    public List<Uri> getImagePaths() {
+        return imagePaths;
+    }
 }

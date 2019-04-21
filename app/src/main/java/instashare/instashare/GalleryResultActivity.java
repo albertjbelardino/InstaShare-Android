@@ -5,7 +5,9 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
@@ -33,7 +35,7 @@ import java.util.concurrent.CountDownLatch;
 
 public class GalleryResultActivity extends AppCompatActivity {
 
-    String galleryImagePath;
+    Uri galleryImagePath;
     Button sendImageButton;
     Activity a = this;
 
@@ -47,9 +49,13 @@ public class GalleryResultActivity extends AppCompatActivity {
     }
 
     private void setBackgroundImage() {
-        galleryImagePath = getIntent().getStringExtra("galleryImagePath");
-        ((ImageView) findViewById(R.id.gallery_picture))
-                .setImageBitmap(BitmapFactory.decodeFile(galleryImagePath));
+        galleryImagePath = getIntent().getParcelableExtra("galleryImagePath");
+        try {
+            ((ImageView) findViewById(R.id.gallery_picture))
+                    .setImageBitmap(MediaStore.Images.Media.getBitmap(getContentResolver(), galleryImagePath));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void setSendImageButton() {
@@ -63,7 +69,7 @@ public class GalleryResultActivity extends AppCompatActivity {
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 byte[] b = baos.toByteArray();
                 try {
-                    BitmapFactory.decodeFile(galleryImagePath)
+                    MediaStore.Images.Media.getBitmap(a.getContentResolver(), galleryImagePath)
                             .compress(Bitmap.CompressFormat.JPEG, 100, baos); //bm is the bitmap object
                     b = baos.toByteArray();
                     baos.close();

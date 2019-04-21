@@ -86,6 +86,7 @@
         </provider>
 
         <activity android:name=".ChooseSendActivity" />
+        <activity android:name=".GallerySendActivity"/>
     </application>
 
 </manifest>

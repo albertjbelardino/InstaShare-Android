@@ -87,8 +87,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onOptionsItemSelected(MenuItem item){
         switch(item.getItemId()){
             case android.R.id.home:
-                TextView username = drawer.findViewById(R.id.user_name);
-                username.setText(LoginService.my_username);
+                //TextView username = drawer.findViewById(R.id.user_name);
+                //username.setText(LoginService.my_username);
                 drawer.openDrawer(GravityCompat.START);
                 return true;
         }
@@ -123,15 +123,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (resultCode == Activity.RESULT_OK)
             switch (requestCode){
                 case 1:
-                    ClipData selectedImages = data.getClipData();
-                    ArrayList<ClipData> galleryImagePaths = new ArrayList<ClipData>();
-                    galleryImagePaths.add(selectedImages);
+                    if(data.getClipData() == null) {
 
-                    //make intent for pic taken activity
-                    Intent intent = new Intent(this, BatchGalleryActivity.class);
-                    intent.putParcelableArrayListExtra("galleryImagePaths", galleryImagePaths);
-                    startActivity(intent);
+                        //make intent for pic taken activity
+                        Intent intent = new Intent(this, GalleryResultActivity.class);
+                        intent.putExtra("galleryImagePath", data.getData());
+                        startActivity(intent);
+                    }
+                    else if(data.getClipData().getItemCount() > 1) {
+                        ClipData selectedImages = data.getClipData();
+                        ArrayList<ClipData> galleryImagePaths = new ArrayList<ClipData>();
+                        galleryImagePaths.add(selectedImages);
 
+                        //make intent for pic taken activity
+                        Intent intent = new Intent(this, BatchGalleryActivity.class);
+                        intent.putParcelableArrayListExtra("galleryImagePaths", galleryImagePaths);
+                        startActivity(intent);
+                    }
                     break;
             }
     }
