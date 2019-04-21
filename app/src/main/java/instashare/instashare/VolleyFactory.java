@@ -2,17 +2,22 @@ package instashare.instashare;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Parcelable;
 import android.util.Log;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.ServerError;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
@@ -21,6 +26,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -129,7 +138,7 @@ public class VolleyFactory {
 
     public static void sendJsonArrayRequestWithJsonObject(JSONObject jsonob,
                                                           Context applicationContext, String apiUrl,
-                                                          final Context callingContext, List<Uri> imagePaths) {
+                                                          final Context callingContext, final List<Uri> imagePaths) {
 
         final JSONArray[] responseHolder = new JSONArray[1];
         final Intent[] intentHolder = new Intent[1];
@@ -149,27 +158,42 @@ public class VolleyFactory {
                     String[] names = new String[response.length()];
                     for (int x = 0; x < response.length(); x++) {
                         try {
-                            Log.i("phone_number_response", response.getJSONObject(x).getString("phone_number"));
-                            Log.i("name_response", response.getJSONObject(x).getString("name"));
+                            numbers[x] = response.getJSONObject(x).getString("phone_number");
+                            names[x] = response.getJSONObject(x).getString("name");
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
                     }
-                    /*
-                    Intent i = new Intent(callingContext, ChooseSendActivity.class);
+
+                    Intent i = new Intent(callingContext, BatchSendActivity.class);
                     i.putExtra("contact_names", names);
                     i.putExtra("contact_numbers", numbers);
-                    i.putExtra("myimagepath", imagepath);
-                    dialog.dismiss();
-                    finala.finish();
-                    callingContext.startActivity(i);*/
+                    i.putParcelableArrayListExtra("myimagepaths", new ArrayList<Uri>(imagePaths));
+
+                    callingContext.startActivity(i);
                 }
             }
 
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.i("Error", error.toString());
+                // As of f605da3 the following should work
+                NetworkResponse response = error.networkResponse;
+                if (error instanceof ServerError && response != null) {
+                    try {
+                        String res = new String(response.data,
+                                HttpHeaderParser.parseCharset(response.headers, "utf-8"));
+                        // Now you can use any deserializer to make sense of data
+                        JSONObject obj = new JSONObject(res);
+                        Log.i("json_response_volley", obj.toString());
+                    } catch (UnsupportedEncodingException e1) {
+                        // Couldn't properly decode data to string
+                        e1.printStackTrace();
+                    } catch (JSONException e2) {
+                        // returned data is not JSONObject?
+                        e2.printStackTrace();
+                    }
+                }
             }
         }) {
             @Override
@@ -181,7 +205,7 @@ public class VolleyFactory {
                 return headers;
             }
         };
-        jor.setRetryPolicy(new DefaultRetryPolicy(30000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        jor.setRetryPolicy(new DefaultRetryPolicy(3000000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         rq.add(jor);
     }
 }

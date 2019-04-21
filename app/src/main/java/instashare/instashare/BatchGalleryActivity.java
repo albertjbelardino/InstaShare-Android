@@ -18,11 +18,15 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
@@ -49,26 +53,26 @@ public class BatchGalleryActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 JSONObject data = new JSONObject();
-
+                int count = 0;
+                final JSONArray jsonArray = new JSONArray();
                 for(Uri galleryImagePath: galleryCardAdapter.getImagePaths()) {
-                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    byte[] b = baos.toByteArray();
                     try {
-                        MediaStore.Images.Media.getBitmap(context.getContentResolver(), galleryImagePath)
-                                .compress(Bitmap.CompressFormat.JPEG, 100, baos); //bm is the bitmap object
-                        b = baos.toByteArray();
-                        baos.close();
-                    } catch (IOException e) {
+                        final InputStream imageStream = getContentResolver().openInputStream(galleryImagePath);
+                        final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
+                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        selectedImage.compress(Bitmap.CompressFormat.JPEG,100,baos);
+                        byte[] b = baos.toByteArray();
+                        String encImage = Base64.encodeToString(b, Base64.DEFAULT);
+                        jsonArray.put(encImage);
+                        count = count + 1;
+                    } catch (FileNotFoundException e) {
                         e.printStackTrace();
                     }
-
-                    final String sfString = Base64.encodeToString(b, Base64.DEFAULT);
-
-                    try {
-                        data.put("batch_photo", sfString);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+                }
+                try {
+                    data.put("group_photo", jsonArray);
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
                 Log.i("json_object_batch", data.toString());
                 VolleyFactory.sendJsonArrayRequestWithJsonObject(data, getApplicationContext(),

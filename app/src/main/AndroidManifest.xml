@@ -18,7 +18,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".BatchGalleryActivity"></activity>
+        <activity android:name=".BatchGalleryActivity" />
         <activity
             android:name=".SingleContactUploadActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" />
@@ -86,7 +86,8 @@
         </provider>
 
         <activity android:name=".ChooseSendActivity" />
-        <activity android:name=".GallerySendActivity"/>
+        <activity android:name=".GallerySendActivity" />
+        <activity android:name=".BatchSendActivity"/>
     </application>
 
 </manifest>

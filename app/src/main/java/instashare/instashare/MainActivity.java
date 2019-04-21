@@ -124,7 +124,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             switch (requestCode){
                 case 1:
                     if(data.getClipData() == null) {
-
                         //make intent for pic taken activity
                         Intent intent = new Intent(this, GalleryResultActivity.class);
                         intent.putExtra("galleryImagePath", data.getData());
