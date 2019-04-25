@@ -7,7 +7,8 @@ import com.twilio.type.PhoneNumber;
 public class ApiContract {
 
     public static final String baseUrl = "http://django-env.mzkdgeh5tz.us-east-1.elasticbeanstalk.com:80/";
-    public static final String twilioSID = "SK3e5cd4ee9d4317bb2aae7da8e01f0075";
+    public static final String twilioSID  = "";
+    public static final String twilioAuth = "";
 
     public static String loginUrl() {
         return baseUrl + "api/token/";
