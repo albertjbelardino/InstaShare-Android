@@ -87,8 +87,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onOptionsItemSelected(MenuItem item){
         switch(item.getItemId()){
             case android.R.id.home:
-                //TextView username = drawer.findViewById(R.id.user_name);
-                //username.setText(LoginService.my_username);
+                TextView username = drawer.findViewById(R.id.user_name);
+                username.setText(LoginService.my_username);
                 drawer.openDrawer(GravityCompat.START);
                 return true;
         }

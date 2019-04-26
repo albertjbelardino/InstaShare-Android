@@ -76,8 +76,8 @@ public class VolleyFactory {
 
         final ProgressDialog dialog = new ProgressDialog(a); // this = YourActivity
         dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        dialog.setTitle("Loading");
-        dialog.setMessage("Loading. Please wait...");
+        dialog.setTitle("Instashare");
+        dialog.setMessage("Your picture is being matched. Please wait...");
         dialog.setIndeterminate(true);
         dialog.setCanceledOnTouchOutside(false);
 
@@ -138,12 +138,20 @@ public class VolleyFactory {
 
     public static void sendJsonArrayRequestWithJsonObject(JSONObject jsonob,
                                                           Context applicationContext, String apiUrl,
-                                                          final Context callingContext, final List<Uri> imagePaths) {
+                                                          final Activity callingContext, final List<Uri> imagePaths) {
 
         final JSONArray[] responseHolder = new JSONArray[1];
         final Intent[] intentHolder = new Intent[1];
         responseHolder[0] = new JSONArray();
         RequestQueue rq = Volley.newRequestQueue(applicationContext);
+
+        final ProgressDialog dialog = new ProgressDialog(callingContext); // this = YourActivity
+        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        dialog.setTitle("Instashare");
+        dialog.setMessage("Your pictures are being matched. Please wait...");
+        dialog.setIndeterminate(true);
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
 
         JsonArrayRequest jor = new JsonArrayRequest(Request.Method.POST, apiUrl, jsonob, new Response.Listener<JSONArray>() {
             @Override
@@ -169,8 +177,9 @@ public class VolleyFactory {
                     i.putExtra("contact_names", names);
                     i.putExtra("contact_numbers", numbers);
                     i.putParcelableArrayListExtra("myimagepaths", new ArrayList<Uri>(imagePaths));
-
+                    dialog.dismiss();
                     callingContext.startActivity(i);
+                    callingContext.finish();
                 }
             }
 

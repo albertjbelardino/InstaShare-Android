@@ -1,5 +1,6 @@
 package instashare.instashare;
 
+import android.app.Activity;
 import android.content.ClipData;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -35,7 +36,7 @@ public class BatchGalleryActivity extends AppCompatActivity {
     ViewPager galleryViewPager;
     GalleryCardAdapter galleryCardAdapter;
     Button removeButton;
-    final Context context = this;
+    final Activity context = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
