@@ -39,4 +39,18 @@ public class ExampleUnitTest {
         }
         assertFalse("not greater than zero", LoginService.jwt_token.length() > 0);
     }
+
+    @Test
+    public void checkAPIContract()
+    {
+        assertEquals("http://django-env.mzkdgeh5tz.us-east-1.elasticbeanstalk.com:80/api/singlephotoMobile/", ApiContract.sendPicture());
+    }
+
+    @Test
+    public void checkJwtTokenSave()
+    {
+        LoginService.jwt_token = "customtoken";
+        assertEquals("customtoken", LoginService.jwt_token);
+    }
+
 }
