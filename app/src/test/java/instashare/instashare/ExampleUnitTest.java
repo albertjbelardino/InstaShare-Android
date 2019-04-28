@@ -12,33 +12,7 @@ import static org.junit.Assert.*;
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
 public class ExampleUnitTest {
-    @Test
-    public void addition_isCorrect() {
-        assertEquals(4, 2 + 2);
-    }
 
-    @Test
-    public void contact_upload() {
-
-        Thread thread = new Thread() {
-            @Override
-            public void run() {
-                try {
-                    LoginService.login("user", "123");
-                }
-                catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        };
-        thread.start();
-        try {
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        assertFalse("not greater than zero", LoginService.jwt_token.length() > 0);
-    }
 
     @Test
     public void checkAPIContract()
@@ -52,5 +26,9 @@ public class ExampleUnitTest {
         LoginService.jwt_token = "customtoken";
         assertEquals("customtoken", LoginService.jwt_token);
     }
+
+
+
+
 
 }

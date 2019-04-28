@@ -1,9 +1,12 @@
 package instashare.instashare;
 
 import android.content.Context;
+import android.net.Uri;
+import android.os.Looper;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
+import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -29,4 +32,85 @@ public class ExampleInstrumentedTest {
         Context appContext = InstrumentationRegistry.getTargetContext();
 
     }
+
+    @Test
+    public void log_in() {
+
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    LoginService.login("test", "Testo1");
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        thread.start();
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        assertTrue("greater than zero", LoginService.jwt_token.length() > 0);
+    }
+
+    @Test
+    public void contact_upload() {
+
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    Looper.prepare();
+                    LoginService.login("bad", "no");
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        thread.start();
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        assertFalse("not greater than zero", LoginService.jwt_token.length() < 0);
+    }
+
+    @Test
+    public void recognize() {
+
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    Looper.prepare();
+                    LoginService.login("user", "123");
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        thread.start();
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        Looper.prepare();
+        try {
+            VolleyFactory.sendJsonArrayRequestWithJsonObject(new JSONObject(), InstrumentationRegistry.getTargetContext(), "", InstrumentationRegistry.getTargetContext(), Uri.parse(""), new PictureTakenActivity());
+        }
+        catch(NullPointerException e)
+        {
+            assertTrue(true);
+        }
+
+    }
+
+
 }
