@@ -153,9 +153,9 @@ public class VolleyFactory {
         dialog.setCanceledOnTouchOutside(false);
         dialog.show();
 
-        JsonArrayRequest jor = new JsonArrayRequest(Request.Method.POST, apiUrl, jsonob, new Response.Listener<JSONArray>() {
+        JsonObjectRequest jor = new JsonObjectRequest(Request.Method.POST, apiUrl, jsonob, new Response.Listener<JSONObject>() {
             @Override
-            public void onResponse(JSONArray response) {
+            public void onResponse(JSONObject response) {
                 if(response.length() == 0)
                 {
                     Log.d("response_len", "response len is 0");
@@ -164,6 +164,7 @@ public class VolleyFactory {
                     Log.d("response", response.toString());
                     String[] numbers = new String[response.length()];
                     String[] names = new String[response.length()];
+                    /*
                     for (int x = 0; x < response.length(); x++) {
                         try {
                             numbers[x] = response.getJSONObject(x).getString("phone_number");
@@ -172,7 +173,7 @@ public class VolleyFactory {
                             e.printStackTrace();
                         }
                     }
-
+*/
                     Intent i = new Intent(callingContext, BatchSendActivity.class);
                     i.putExtra("contact_names", names);
                     i.putExtra("contact_numbers", numbers);
