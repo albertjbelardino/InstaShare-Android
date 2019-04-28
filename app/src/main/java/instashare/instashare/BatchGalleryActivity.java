@@ -54,8 +54,9 @@ public class BatchGalleryActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 JSONObject data = new JSONObject();
+                JSONArray  array = new JSONArray();
                 int count = 0;
-                final JSONArray jsonArray = new JSONArray();
+
                 for(Uri galleryImagePath: galleryCardAdapter.getImagePaths()) {
                     try {
                         final InputStream imageStream = getContentResolver().openInputStream(galleryImagePath);
@@ -64,15 +65,17 @@ public class BatchGalleryActivity extends AppCompatActivity {
                         selectedImage.compress(Bitmap.CompressFormat.JPEG,100,baos);
                         byte[] b = baos.toByteArray();
                         String encImage = Base64.encodeToString(b, Base64.DEFAULT);
-                        jsonArray.put(encImage);
+
+                        array.put(encImage);
                         count = count + 1;
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
                     }
                 }
                 try {
-                    data.put("group_photo", jsonArray);
-                } catch (JSONException e) {
+                    data.put("group_photo", array);
+                }
+                catch (JSONException e) {
                     e.printStackTrace();
                 }
                 Log.i("json_object_batch", data.toString());

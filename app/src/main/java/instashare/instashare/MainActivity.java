@@ -35,6 +35,12 @@ import android.widget.TextView;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
@@ -55,7 +61,28 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         getPermissions();
         setUpPictureTaking();
         Log.d("are logged?", Boolean.toString(PreferenceManager.getDefaultSharedPreferences(this).getBoolean(LOGGED_IN, false)));
+/*
+        try {
+            List<String> list = new ArrayList<String>();
+            list.add("https://free-images.com/tn/7727/camping_tent_in_mountains.jpg");
+            list.add("https://free-images.com/tn/f1bb/hiker_camp_tent_arctic.jpg");
 
+            TwilioRequestFactory.post(ApiContract.ngrokUrl(), "+12673917871",
+                    "this worked shit man", new OkHttpClient(), list, new Callback() {
+                        @Override
+                        public void onFailure(Call call, IOException e) {
+                            e.printStackTrace();
+                        }
+
+                        @Override
+                        public void onResponse(Call call, Response response) throws IOException {
+                            Log.i("main_response", response.toString());
+                        }
+                    });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+*/
         if(!PreferenceManager.getDefaultSharedPreferences(this).getBoolean(LOGGED_IN, false)) {
             Intent i = new Intent(this, LogInActivity.class);
             startActivity(i);
