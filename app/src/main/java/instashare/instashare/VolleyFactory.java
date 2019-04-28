@@ -217,5 +217,89 @@ public class VolleyFactory {
         jor.setRetryPolicy(new DefaultRetryPolicy(3000000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         rq.add(jor);
     }
+
+    public static void sendJsonArrayRequestWithJsonArray(JSONArray jsonarr,
+                                                          Context applicationContext, String apiUrl,
+                                                          final Activity callingContext, final List<Uri> imagePaths) {
+
+        final JSONArray[] responseHolder = new JSONArray[1];
+        final Intent[] intentHolder = new Intent[1];
+        responseHolder[0] = new JSONArray();
+        RequestQueue rq = Volley.newRequestQueue(applicationContext);
+
+        final ProgressDialog dialog = new ProgressDialog(callingContext); // this = YourActivity
+        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        dialog.setTitle("Instashare");
+        dialog.setMessage("Your pictures are being matched. Please wait...");
+        dialog.setIndeterminate(true);
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
+
+        JsonArrayRequest jor = new JsonArrayRequest(Request.Method.POST, apiUrl, jsonarr, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                if(response.length() == 0)
+                {
+                    Log.d("response_len", "response len is 0");
+                    dialog.dismiss();
+                }
+                else {
+                    Log.d("response", response.toString());
+                    String[] numbers = new String[response.length()];
+                    String[] names = new String[response.length()];
+                    for (int x = 0; x < response.length(); x++) {
+                        try {
+                            numbers[x] = response.getJSONObject(x).getString("phone_number");
+                            names[x] = response.getJSONObject(x).getString("name");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    Intent i = new Intent(callingContext, BatchSendActivity.class);
+                    i.putExtra("contact_names", names);
+                    i.putExtra("contact_numbers", numbers);
+                    i.putParcelableArrayListExtra("myimagepaths", new ArrayList<Uri>(imagePaths));
+                    dialog.dismiss();
+                    callingContext.startActivity(i);
+                    callingContext.finish();
+                }
+            }
+
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                // As of f605da3 the following should work
+                NetworkResponse response = error.networkResponse;
+                if (error instanceof ServerError && response != null) {
+                    try {
+                        String res = new String(response.data,
+                                HttpHeaderParser.parseCharset(response.headers, "utf-8"));
+                        // Now you can use any deserializer to make sense of data
+                        JSONObject obj = new JSONObject(res);
+                        Log.i("json_response_volley", obj.toString());
+                    } catch (UnsupportedEncodingException e1) {
+                        // Couldn't properly decode data to string
+                        e1.printStackTrace();
+                    } catch (JSONException e2) {
+                        // returned data is not JSONObject?
+                        e2.printStackTrace();
+                    }
+                }
+                dialog.dismiss();
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", "Bearer " +
+                        LoginService.jwt_token);
+                return headers;
+            }
+        };
+        jor.setRetryPolicy(new DefaultRetryPolicy(3000000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        rq.add(jor);
+    }
 }
 
